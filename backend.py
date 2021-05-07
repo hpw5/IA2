@@ -72,17 +72,37 @@ def create_database():
 
 # Put csv values into database
 def import_csv(file_name):
-    with open(file_name, encoding = "utf8") as csv_file:
-        #csv_reader = csv.reader(csv_file, delimiter = ",")
-        for line in csv.DictReader(csv_file):
-            artists_dict = line
-            values = artists_dict["artists"].replace('"','')
-            sql = f"""
-                INSERT INTO Artists
-                VALUES ("{values}")
-                """
-            sqlcommand(sql)
-
+    if file_name == "data_by_artist_o.csv":
+        with open(file_name, encoding = "utf8") as csv_file:
+            #csv_reader = csv.reader(csv_file, delimiter = ",")
+            for line in csv.DictReader(csv_file):
+                # Import artists
+                artist_values = line["artists"].replace('"','')
+                artist_sql = f"""
+                    INSERT INTO Artists
+                    VALUES ("{artist_values}")
+                    """
+                sqlcommand(artist_sql)
+                
+                # Import Genres
+                genre_values_no_left_bracket = line["genres"].replace('[', '')
+                genre_values_no_right_bracket = genre_values_no_left_bracket.replace(']', '"')
+                if genre_values_no_right_bracket != '"':
+                    genre_values_raw = genre_values_no_right_bracket.replace('"', "")
+                    genre_list = genre_values_raw.split(', ')
+                    genre_list = [i.replace("'", '') for i in genre_list]
+                    for i in range(len(genre_list)):
+                        genre_values = (genre_list[i])
+                        try:
+                            genre_sql = f"""
+                                INSERT INTO Genres
+                                VALUES ("{genre_values}")
+                                """
+                            sqlcommand(genre_sql)
+                        except:
+                            pass
+    else:
+        pass
 ## MAIN PROGRAM ##
 # Create tables if no exist
 if os.path.isfile("catalogue.db") == False:
