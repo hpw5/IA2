@@ -35,22 +35,22 @@ def create_database():
     songs_table = """
                         CREATE TABLE Songs (
                             id TEXT PRIMARY KEY,
-                            name TEXT NOT NULL,
-                            acousticness NUMERIC NOT NULL,
-                            danceability NUMERIC NOT NULL,
-                            energy NUMERIC NOT NULL,
-                            duration_ms NUMERIC NOT NULL,
-                            instrumentals NUMERIC NOT NULL,
-                            valance NUMERIC NOT NULL,
-                            popularity NUMERIC NOT NULL,
-                            tempo NUMERIC NOT NULL,
-                            liveness NUMERIC NOT NULL,
-                            loudness NUMERIC NOT NULL,
-                            speechiness NUMERIC NOT NULL,
-                            mode INTEGER NOT NULL,
-                            key INTEGER NOT NULL,
-                            explict INTERGER NOT NULL,
-                            release_date TEXT NOT NULL
+                            name TEXT,
+                            acousticness NUMERIC,
+                            danceability NUMERIC,
+                            energy NUMERIC,
+                            duration_ms NUMERIC,
+                            instrumentals NUMERIC,
+                            valance NUMERIC,
+                            popularity NUMERIC,
+                            tempo NUMERIC,
+                            liveness NUMERIC,
+                            loudness NUMERIC,
+                            speechiness NUMERIC,
+                            mode INTEGER,
+                            key INTEGER,
+                            explict INTERGER,
+                            release_date TEXT
                         );
                         """
     artistssongs_table = """
@@ -72,6 +72,7 @@ def create_database():
 
 # Put csv values into database
 def import_csv(file_name):
+    # Import artists and genres
     if file_name == "data_by_artist_o.csv":
         with open(file_name, encoding = "utf8") as csv_file:
             #csv_reader = csv.reader(csv_file, delimiter = ",")
@@ -98,10 +99,19 @@ def import_csv(file_name):
                             VALUES ("{genre_values}")
                             """
                         sqlcommand(genre_sql)
-                        except:
-                            pass
+    # Import Songs
     else:
-        pass
+        with open(file_name, encoding = "utf8") as csv_file:
+            for line in csv.DictReader(csv_file):
+                # Import id
+                id_values = line["id"]
+                song_sql = f"""
+                    INSERT OR IGNORE INTO Songs (id)
+                    VALUES ("{id_values}")
+                    """
+                sqlcommand(song_sql)
+                print(song_sql)
+
 ## MAIN PROGRAM ##
 # Create tables if no exist
 if os.path.isfile("catalogue.db") == False:
@@ -111,4 +121,5 @@ else:
     print("Database already exist")
 
 # import csv files
-import_csv("data_by_artist_o.csv")
+#import_csv("data_by_artist_o.csv")
+import_csv("tracks.csv")
