@@ -79,7 +79,7 @@ def import_csv(file_name):
                 # Import artists
                 artist_values = line["artists"].replace('"','')
                 artist_sql = f"""
-                    INSERT INTO Artists
+                    INSERT OR IGNORE INTO Artists
                     VALUES ("{artist_values}")
                     """
                 sqlcommand(artist_sql)
@@ -93,12 +93,11 @@ def import_csv(file_name):
                     genre_list = [i.replace("'", '') for i in genre_list]
                     for i in range(len(genre_list)):
                         genre_values = (genre_list[i])
-                        try:
-                            genre_sql = f"""
-                                INSERT INTO Genres
-                                VALUES ("{genre_values}")
-                                """
-                            sqlcommand(genre_sql)
+                        genre_sql = f"""
+                            INSERT OR IGNORE INTO Genres
+                            VALUES ("{genre_values}")
+                            """
+                        sqlcommand(genre_sql)
                         except:
                             pass
     else:
