@@ -105,9 +105,10 @@ def import_csv(file_name):
             for line in csv.DictReader(csv_file):
                 # Import id
                 id_values = line["id"]
+                name_values = line["name"]
                 song_sql = f"""
-                    INSERT OR IGNORE INTO Songs (id)
-                    VALUES ("{id_values}")
+                    INSERT OR IGNORE INTO Songs (id, name)
+                    VALUES ("{id_values}", "{name_values}")
                     """
                 sqlcommand(song_sql)
                 print(song_sql)
