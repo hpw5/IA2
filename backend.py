@@ -107,17 +107,17 @@ def import_csv(file_name):
         sqlmanycommand("INSERT OR IGNORE INTO Genres VALUES (?)",genre_list)
     # Import Songs
     else:
+        song_list = []
+        # Open tracks file
         with open(file_name, encoding = "utf8") as csv_file:
-            for row in csv.DictReader(csv_file):
+            csv_reader = csv.reader(csv_file, delimiter = ",")
+            next(csv_reader)
+            for row in csv_reader:
                 # Import id
-                id_values = row["id"]
-                name_values = row["name"]
-                song_sql = f"""
-                    INSERT OR IGNORE INTO Songs (id, name)
-                    VALUES ("{id_values}", "{name_values}")
-                    """
-                sqlcommand(song_sql)
-                print(song_sql)
+                id_values = row[0]
+                name_values = row[1]
+                song_list.append((id_values,name_values,))
+        sqlmanycommand("INSERT OR IGNORE INTO Songs (id, name) VALUES (?,?)",song_list)
 
 ## MAIN PROGRAM ##
 # Create tables if no exist
@@ -129,4 +129,4 @@ else:
 
 # import csv files
 import_csv("data_by_artist_o.csv")
-#import_csv("tracks.csv")
+import_csv("tracks.csv")
