@@ -9,6 +9,12 @@ def sqlcommand(sql_command):
         cursor = database.cursor()
         cursor.execute(sql_command)
 
+# Run sql many command
+def sqlmanycommand(sql_command,values):
+    with sqlite3.connect(DB_FILE) as database:
+        cursor = database.cursor()
+        cursor.executemany(sql_command,values)
+
 # Create tables
 def create_database():
     artists_table = """
@@ -74,38 +80,38 @@ def create_database():
 def import_csv(file_name):
     # Import artists and genres
     if file_name == "data_by_artist_o.csv":
+        artist_list = []
+        genre_list = []
+        # Open artist and genre csv file
         with open(file_name, encoding = "utf8") as csv_file:
-            #csv_reader = csv.reader(csv_file, delimiter = ",")
-            for line in csv.DictReader(csv_file):
+            csv_reader = csv.reader(csv_file, delimiter = ",")
+            next(csv_reader)
+            for row in csv_reader:
                 # Import artists
-                artist_values = line["artists"].replace('"','')
-                artist_sql = f"""
-                    INSERT OR IGNORE INTO Artists
-                    VALUES ("{artist_values}")
-                    """
-                sqlcommand(artist_sql)
+                artists = row[1]
+                artist_values = artists.replace('"','')
+                artist_list.append((artist_values))
+                
                 
                 # Import Genres
-                genre_values_no_left_bracket = line["genres"].replace('[', '')
-                genre_values_no_right_bracket = genre_values_no_left_bracket.replace(']', '"')
-                if genre_values_no_right_bracket != '"':
-                    genre_values_raw = genre_values_no_right_bracket.replace('"', "")
-                    genre_list = genre_values_raw.split(', ')
-                    genre_list = [i.replace("'", '') for i in genre_list]
-                    for i in range(len(genre_list)):
-                        genre_values = (genre_list[i])
-                        genre_sql = f"""
-                            INSERT OR IGNORE INTO Genres
-                            VALUES ("{genre_values}")
-                            """
-                        sqlcommand(genre_sql)
+                genres = row[0]
+                genre_values_no_bracket = genres.replace('[', '').replace(']', '')
+                if genre_values_no_bracket != '':
+                    genres = genre_values_no_bracket.split(',')
+                    for genre_raw in genres:
+                        genre_list.append((genre_raw.strip()[1:-1],))
+        #print(genre_list)           
+
+        #print(genre_list)
+        #sqlmanycommand("INSERT OR IGNORE INTO Artists VALUES (?)",artist_list)
+        sqlmanycommand("INSERT OR IGNORE INTO Genres VALUES (?)",genre_list)
     # Import Songs
     else:
         with open(file_name, encoding = "utf8") as csv_file:
-            for line in csv.DictReader(csv_file):
+            for row in csv.DictReader(csv_file):
                 # Import id
-                id_values = line["id"]
-                name_values = line["name"]
+                id_values = row["id"]
+                name_values = row["name"]
                 song_sql = f"""
                     INSERT OR IGNORE INTO Songs (id, name)
                     VALUES ("{id_values}", "{name_values}")
@@ -122,5 +128,5 @@ else:
     print("Database already exist")
 
 # import csv files
-#import_csv("data_by_artist_o.csv")
-import_csv("tracks.csv")
+import_csv("data_by_artist_o.csv")
+#import_csv("tracks.csv")
