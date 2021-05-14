@@ -115,9 +115,12 @@ def import_csv(file_name):
             for row in csv_reader:
                 # Import id
                 id_values = row[0]
+                # import names
                 name_values = row[1]
-                song_list.append((id_values,name_values,))
-        sqlmanycommand("INSERT OR IGNORE INTO Songs (id, name) VALUES (?,?)",song_list)
+                # import acousticness values
+                acousticness_values = row[14]
+                song_list.append((id_values,name_values,acousticness_values))
+        sqlmanycommand("INSERT OR IGNORE INTO Songs (id, name, acousticness) VALUES (?,?,?)",song_list)
 
 ## MAIN PROGRAM ##
 # Create tables if no exist
