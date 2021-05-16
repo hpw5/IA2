@@ -47,7 +47,7 @@ def create_database():
                             energy NUMERIC,
                             duration_ms NUMERIC,
                             instrumentals NUMERIC,
-                            valance NUMERIC,
+                            valence NUMERIC,
                             popularity NUMERIC,
                             tempo NUMERIC,
                             liveness NUMERIC,
