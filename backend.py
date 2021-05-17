@@ -141,8 +141,14 @@ def import_csv(file_name):
                 speechiness_values = row[13]
                 # import mode values
                 mode_values = row[12]
-                song_list.append((id_values,name_values,acousticness_values,danceability_values,energy_values,duration_values,instrumentals_values,valence_values,popularity_values,tempo_values,liveness_values,loudness_values,speechiness_values,mode_values))
-        sqlmanycommand("INSERT OR IGNORE INTO Songs (id, name, acousticness, danceability, energy, duration_ms, instrumentals, valence, popularity, tempo, liveness, loudness, speechiness, mode) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",song_list)
+                # import key values
+                key_values = row[10]
+                # import explict values
+                explict_values = row[4]
+                # import mode values
+                release_dates = row[7]
+                song_list.append((id_values,name_values,acousticness_values,danceability_values,energy_values,duration_values,instrumentals_values,valence_values,popularity_values,tempo_values,liveness_values,loudness_values,speechiness_values,mode_values,key_values,explict_values,release_dates))
+        sqlmanycommand("INSERT OR IGNORE INTO Songs (id, name, acousticness, danceability, energy, duration_ms, instrumentals, valence, popularity, tempo, liveness, loudness, speechiness, mode, key, explict, release_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",song_list)
 
 ## MAIN PROGRAM ##
 # Create tables if no exist
