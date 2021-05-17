@@ -124,11 +124,15 @@ def import_csv(file_name):
                 # import energy values
                 energy_values = row[9]
                 # import duration values
-                duartion_values = row[3]
+                duration_values = row[3]
                 # import instrumentals values
                 instrumentals_values = row[15]
-                song_list.append((id_values,name_values,acousticness_values,danceability_values,energy_values,duartion_values,instrumentals_values))
-        sqlmanycommand("INSERT OR IGNORE INTO Songs (id, name, acousticness, danceability, energy, duration_ms, instrumentals) VALUES (?,?,?,?,?,?,?)",song_list)
+                # import valance values
+                valence_values = row[17]
+                # import popularity values
+                popularity_values = row[2]
+                song_list.append((id_values,name_values,acousticness_values,danceability_values,energy_values,duration_values,instrumentals_values,valence_values,popularity_values))
+        sqlmanycommand("INSERT OR IGNORE INTO Songs (id, name, acousticness, danceability, energy, duration_ms, instrumentals, valence, popularity) VALUES (?,?,?,?,?,?,?,?,?)",song_list)
 
 ## MAIN PROGRAM ##
 # Create tables if no exist
