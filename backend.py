@@ -131,8 +131,10 @@ def import_csv(file_name):
                 valence_values = row[17]
                 # import popularity values
                 popularity_values = row[2]
-                song_list.append((id_values,name_values,acousticness_values,danceability_values,energy_values,duration_values,instrumentals_values,valence_values,popularity_values))
-        sqlmanycommand("INSERT OR IGNORE INTO Songs (id, name, acousticness, danceability, energy, duration_ms, instrumentals, valence, popularity) VALUES (?,?,?,?,?,?,?,?,?)",song_list)
+                # import tempo values
+                tempo_values = row[18]
+                song_list.append((id_values,name_values,acousticness_values,danceability_values,energy_values,duration_values,instrumentals_values,valence_values,popularity_values,tempo_values))
+        sqlmanycommand("INSERT OR IGNORE INTO Songs (id, name, acousticness, danceability, energy, duration_ms, instrumentals, valence, popularity, tempo) VALUES (?,?,?,?,?,?,?,?,?,?)",song_list)
 
 ## MAIN PROGRAM ##
 # Create tables if no exist
