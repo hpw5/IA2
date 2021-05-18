@@ -61,8 +61,8 @@ def create_database():
                         """
     artistssongs_table = """
                         CREATE TABLE ArtistsSongs (
-                            artist TEXT,
                             song_id TEXT,
+                            artist TEXT,
                             FOREIGN KEY (artist)
                                 REFERENCES Artists (artist),
                             FOREIGN KEY (song_id)
