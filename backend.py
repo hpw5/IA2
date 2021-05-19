@@ -61,8 +61,8 @@ def create_database():
                         """
     artistssongs_table = """
                         CREATE TABLE ArtistsSongs (
-                            artist TEXT,
                             song_id TEXT,
+                            artist TEXT,
                             FOREIGN KEY (artist)
                                 REFERENCES Artists (artist),
                             FOREIGN KEY (song_id)
@@ -89,15 +89,15 @@ def import_csv(file_name):
             for row in csv_reader:
                 # Import artists
                 artists = row[1]
-                artist_values = artists.replace('"','')
-                artist_list.append((artist_values,))
+                artists = artists.replace('"','')
+                artist_list.append((artists,))
                 
                 
                 # Import Genres
                 genres = row[0]
-                genre_values_no_bracket = genres.replace('[', '').replace(']', '')
-                if genre_values_no_bracket != '':
-                    genres = genre_values_no_bracket.split(',')
+                genres = genres.replace('[', '').replace(']', '')
+                if genres != '':
+                    genres = genres.split(',')
                     for genre_raw in genres:
                         genre_list.append((genre_raw.strip()[1:-1],))
         #print(genre_list)           
@@ -150,6 +150,45 @@ def import_csv(file_name):
                 song_list.append((id_values,name_values,acousticness_values,danceability_values,energy_values,duration_values,instrumentals_values,valence_values,popularity_values,tempo_values,liveness_values,loudness_values,speechiness_values,mode_values,key_values,explict_values,release_dates))
         sqlmanycommand("INSERT OR IGNORE INTO Songs (id, name, acousticness, danceability, energy, duration_ms, instrumentals, valence, popularity, tempo, liveness, loudness, speechiness, mode, key, explict, release_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",song_list)
 
+# Create linking table
+def linking_table():
+    # ArtistsGenre table
+    artistgenre = []
+    with open("data_by_artist_o.csv", encoding = "utf8") as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter = ",")
+        next(csv_reader)
+        for row in csv_reader:
+            # Artists
+            artists = row[1]
+            artists = artists.replace('"','')
+            
+            # Genres
+            genres = row[0]
+            genres = genres.replace('[', '').replace(']', '')
+            if genres != '':
+                genres = genres.split(',')
+                for genre_raw in genres:
+                    genre_raw = genre_raw.strip().replace("'","")
+                    artistgenre.append((artists,genre_raw))
+        # Put list into database
+        sqlmanycommand("INSERT OR IGNORE INTO ArtistsGenre VALUES (?,?)",artistgenre)
+    # ArtistsSongs table
+    artistsong = []
+    with open("tracks.csv", encoding = "utf8") as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter = ",")
+        next(csv_reader)
+        for row in csv_reader:
+            # Song_id
+            id_values = row[0]
+
+            # artist
+            artists = row[5]
+            artists = artists.replace('[', '').replace(']', '').split(',')
+            for artist_raw in artists:
+                artist_raw = artist_raw.strip().replace("'","")
+                artistsong.append((id_values,artist_raw))
+        # Put list into database
+        sqlmanycommand("INSERT OR IGNORE INTO ArtistsSongs VALUES (?,?)",artistsong)
 ## MAIN PROGRAM ##
 # Create tables if no exist
 if os.path.isfile("catalogue.db") == False:
@@ -161,3 +200,4 @@ else:
 # import csv files
 import_csv("data_by_artist_o.csv")
 import_csv("tracks.csv")
+linking_table()
