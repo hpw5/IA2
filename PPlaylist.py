@@ -5,8 +5,8 @@ import tkinter as tk
 
 # initialise tkinter
 root = tk.Tk()
-root.title("Database")
-root.geometry("400x400")
+root.title("PPlaylist")
+root.geometry("700x900")
 
 # Loop main window
 root.mainloop()
