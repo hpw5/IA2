@@ -55,7 +55,13 @@ confirm_password_field.grid(column=1, row=3)
 
 # Create bottom frame
 bottom_frame = tk.Frame(master=root)
-bottom_frame.pack(side=tk.BOTTOM)
+bottom_frame.pack(side=tk.TOP, anchor=tk.NW)
+
+## Create tabs for bottom frame
+tab_control_bottom = ttk.Notebook(bottom_frame)
+import_tab = ttk.Frame(tab_control_bottom)
+tab_control_bottom.add(import_tab, text='Start')
+tab_control_bottom.pack()
 
 # Loop main window
 root.mainloop()
