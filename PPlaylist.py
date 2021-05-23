@@ -63,5 +63,11 @@ import_tab = ttk.Frame(tab_control_bottom)
 tab_control_bottom.add(import_tab, text='Start')
 tab_control_bottom.pack()
 
+### Create welcome text
+welcome_text = tk.Label(master=import_tab, text="Welcome. ", font="Helvetica, 35")
+welcome_text.pack()
+info_text = tk.Label(master=import_tab, text= "Import the spotify catalogues to get started.", font="Helvetica, 20")
+info_text.pack(side=tk.LEFT)
+
 # Loop main window
 root.mainloop()
