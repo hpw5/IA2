@@ -9,6 +9,9 @@ root = tk.Tk()
 root.title("PPlaylist")
 root.geometry("1300x900")
 
+# Create tkinter variables
+songs_status = tk.StringVar(value="Status: Not loaded!")
+
 # Create top frame
 top_frame = tk.Frame(master=root, bg="black", height=120)
 top_frame.pack(side=tk.TOP, fill=tk.X)
@@ -67,7 +70,21 @@ tab_control_bottom.pack()
 welcome_text = tk.Label(master=import_tab, text="Welcome. ", font="Helvetica, 35")
 welcome_text.pack()
 info_text = tk.Label(master=import_tab, text= "Import the spotify catalogues to get started.", font="Helvetica, 20")
-info_text.pack(side=tk.LEFT)
+info_text.pack()
+
+### Create import buttons
+import_songs_frame = tk.Frame(master=import_tab)
+import_songs_frame.pack(anchor=tk.W)
+blank_1 = tk.Label(master=import_songs_frame)
+blank_1.pack()
+songs_label = tk.Label(master=import_songs_frame, text="Import the spotify song catalogue.", font="Helvetica, 15")
+songs_label.pack(anchor=tk.W)
+songs_link = tk.Label(master=import_songs_frame, text = "It can be found at https://www.kaggle.com/yamaerenay/spotify-dataset-19212020-160k-tracks/?select=tracks.csv")
+songs_link.pack()
+import_songs_button = tk.Button(master=import_songs_frame, text="Import songs")
+import_songs_button.pack(anchor=tk.W)
+import_songs_status = tk.Label(master=import_songs_frame, textvariable=songs_status, fg="red")
+import_songs_status.pack(anchor=tk.W)
 
 # Loop main window
 root.mainloop()
