@@ -6,6 +6,7 @@ from tkinter import ttk
 PATH = "./"
 DB_FILE = PATH + "catalogue.db"
 
+## BACKEND ##
 # Run sql command
 def sqlcommand(sql_command):
     with sqlite3.connect(DB_FILE) as database:
@@ -191,6 +192,7 @@ def linking_table():
         # Put list into database
         sqlmanycommand("INSERT OR IGNORE INTO ArtistsSongs VALUES (?,?)",artistsong)
 
+## GUI ##
 # initialise tkinter
 root = tk.Tk()
 root.title("PPlaylist")
@@ -287,6 +289,14 @@ import_artists_button = tk.Button(master=import_artists_frame, text="Import arti
 import_artists_button.pack(anchor=tk.W)
 import_artists_status = tk.Label(master=import_artists_frame, textvariable=songs_status, fg="red")
 import_artists_status.pack(anchor=tk.W)
+
+## Create prefrences side
+prefrences_frame = tk.Frame(master=create_playlist_tab)
+prefrences_frame.pack(side=tk.LEFT,anchor=tk.NW)
+create_prefrences_label = tk.Label(master=prefrences_frame, text="Create playlist", font="Helvetica, 35")
+create_prefrences_label.pack()
+prefrences_guide_label = tk.Label(master=prefrences_frame, text="Fill out the fields with what audio features you want your music to have.", font="Helvetica, 15")
+prefrences_guide_label.pack()
 
 # Loop main window
 root.mainloop()
