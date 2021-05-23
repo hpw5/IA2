@@ -439,5 +439,13 @@ load_features_label.grid(row=0, column=1, padx=15, pady=10)
 features_saved_label = tk.Label(master=prefrences_frame, textvariable=features_saved, fg="green")
 features_saved_label.pack(anchor=tk.W)
 
+# Explict button
+explict_frame = tk.Frame(master=prefrences_frame)
+explict_frame.pack(anchor=tk.W)
+explict_checkbox = tk.Checkbutton(master=explict_frame)
+explict_checkbox.grid(row=0, column=0)
+explict_label = tk.Label(master=explict_frame, text="Include explict songs")
+explict_label.grid(row=0, column=1)
+
 # Loop main window
 root.mainloop()
