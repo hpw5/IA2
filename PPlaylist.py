@@ -268,7 +268,7 @@ info_text.pack()
 
 # Create import buttons
 import_songs_frame = tk.Frame(master=import_tab)
-import_songs_frame.pack(anchor=tk.W)
+import_songs_frame.pack(anchor=tk.W, padx=15)
 blank_1 = tk.Label(master=import_songs_frame)
 blank_1.pack()
 songs_label = tk.Label(master=import_songs_frame, text="Import the spotify song catalogue.", font="Helvetica, 15")
@@ -281,7 +281,7 @@ import_songs_status = tk.Label(master=import_songs_frame, textvariable=songs_sta
 import_songs_status.pack(anchor=tk.W)
 
 import_artists_frame = tk.Frame(master=import_tab)
-import_artists_frame.pack(anchor=tk.W)
+import_artists_frame.pack(anchor=tk.W, padx=15)
 blank_1 = tk.Label(master=import_artists_frame)
 blank_1.pack()
 artists_label = tk.Label(master=import_artists_frame, text="Import the spotify artist catalogue.", font="Helvetica, 15")
