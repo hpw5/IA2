@@ -86,5 +86,18 @@ import_songs_button.pack(anchor=tk.W)
 import_songs_status = tk.Label(master=import_songs_frame, textvariable=songs_status, fg="red")
 import_songs_status.pack(anchor=tk.W)
 
+import_artists_frame = tk.Frame(master=import_tab)
+import_artists_frame.pack(anchor=tk.W)
+blank_1 = tk.Label(master=import_artists_frame)
+blank_1.pack()
+artists_label = tk.Label(master=import_artists_frame, text="Import the spotify artist catalogue.", font="Helvetica, 15")
+artists_label.pack(anchor=tk.W)
+artists_link = tk.Label(master=import_artists_frame, text = "It can be found at https://www.kaggle.com/yamaerenay/spotify-dataset-19212020-160k-tracks/?select=data_by_artist_o.csv")
+artists_link.pack()
+import_artists_button = tk.Button(master=import_artists_frame, text="Import artists")
+import_artists_button.pack(anchor=tk.W)
+import_artists_status = tk.Label(master=import_artists_frame, textvariable=songs_status, fg="red")
+import_artists_status.pack(anchor=tk.W)
+
 # Loop main window
 root.mainloop()
