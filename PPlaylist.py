@@ -63,7 +63,9 @@ bottom_frame.pack(side=tk.TOP, anchor=tk.NW)
 ## Create tabs for bottom frame
 tab_control_bottom = ttk.Notebook(bottom_frame)
 import_tab = ttk.Frame(tab_control_bottom)
+create_playlist_tab = ttk.Frame(tab_control_bottom)
 tab_control_bottom.add(import_tab, text='Start')
+tab_control_bottom.add(create_playlist_tab, text="Create playlist")
 tab_control_bottom.pack()
 
 ### Create welcome text
