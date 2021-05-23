@@ -100,9 +100,7 @@ def import_csv(file_name):
                     genres = genres.split(',')
                     for genre_raw in genres:
                         genre_list.append((genre_raw.strip()[1:-1],))
-        #print(genre_list)           
-
-        #print(genre_list)
+                        
         sqlmanycommand("INSERT OR IGNORE INTO Artists VALUES (?)",artist_list)
         sqlmanycommand("INSERT OR IGNORE INTO Genres VALUES (?)",genre_list)
     # Import Songs
