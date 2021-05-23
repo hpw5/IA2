@@ -203,6 +203,7 @@ songs_status = tk.StringVar(value="Status: Not loaded!")
 mode_selection = tk.StringVar(value="-")
 key_selection = tk.StringVar(value="-")
 genre_selection = tk.StringVar(value="-")
+features_saved = tk.StringVar()
 
 # Create top frame
 top_frame = tk.Frame(master=root, bg="black", height=120)
@@ -295,7 +296,7 @@ import_artists_status.pack(anchor=tk.W)
 
 # Create prefrences side
 prefrences_frame = tk.Frame(master=create_playlist_tab)
-prefrences_frame.pack(side=tk.LEFT,anchor=tk.NW)
+prefrences_frame.pack(side=tk.LEFT,anchor=tk.NW, padx=15)
 create_prefrences_label = tk.Label(master=prefrences_frame, text="Create playlist", font="Helvetica, 35")
 create_prefrences_label.pack()
 prefrences_guide_label = tk.Label(master=prefrences_frame, text="Fill out the fields with what audio features you want your music to have.", font="Helvetica, 15")
@@ -427,5 +428,16 @@ num_of_songs_label = tk.Label(master=prefrences_table_frame, text="Number of son
 num_of_songs_label.grid(row=14, column=1)
 num_of_songs_entry = tk.Entry(master=prefrences_table_frame)
 num_of_songs_entry.grid(row=14, column=2)
+
+# Pre-set audio features button
+pre_set_audio_features_frame = tk.Frame(master=prefrences_frame)
+pre_set_audio_features_frame.pack(anchor=tk.W)
+save_features_label = tk.Button(master=pre_set_audio_features_frame, text="Save audio features")
+save_features_label.grid(row=0, column=0)
+load_features_label = tk.Button(master=pre_set_audio_features_frame, text="Load audio features")
+load_features_label.grid(row=0, column=1, padx=15, pady=10)
+features_saved_label = tk.Label(master=prefrences_frame, textvariable=features_saved, fg="green")
+features_saved_label.pack(anchor=tk.W)
+
 # Loop main window
 root.mainloop()
