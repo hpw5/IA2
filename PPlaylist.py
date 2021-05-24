@@ -203,20 +203,20 @@ root.title("PPlaylist")
 root.geometry("1300x900")
 
 # Tkinter functions
-# Select and importthe songs csv file
+# Select and import songs csv file
 def import_songs():
     # Checks whether the songs list has been imported or not
     if songs_status.get() == ("Status: Not loaded!"):
         file = tk.filedialog.askopenfilename(filetype=(('CSV files', "tracks.csv"),))
-        messagebox.showinfo("PPlaylist", "Now importing the spotfiy songlist. This may take a moment.")
-        #import_csv(file)
-        messagebox.showinfo("PPlaylist", "Spotfiy songlist successfully imported.")
-        songs_status.set("Status: Loaded!")
-        import_songs_status.configure(fg="green")
+        # Checks if the user actually selected a file or not
+        if file != "":
+            messagebox.showinfo("PPlaylist", "Now importing the spotfiy songlist. This may take a moment.")
+            messagebox.showinfo("PPlaylist", "Spotfiy songlist successfully imported.")
+            songs_status.set("Status: Loaded!")
+            import_songs_status.configure(fg="green")
     else:
         #TODO Let users "reset" the catalogue. (Actually just delete it)
         messagebox.showerror("PPlaylist", "Error: Songlist has already been imported!")
-
 
 # Create tkinter variables
 songs_status = tk.StringVar(value="Status: Not loaded!")
