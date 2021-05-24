@@ -210,7 +210,8 @@ def import_songs():
         file = tk.filedialog.askopenfilename(filetype=(('CSV files', "tracks.csv"),))
         # Checks if the user actually selected a file or not
         if file != "":
-            messagebox.showinfo("PPlaylist", "Now importing the spotfiy songlist. This may take a moment.")
+            messagebox.showinfo("PPlaylist", "Now importing the spotify songlist. This may take a moment.")
+            import_csv(file)
             messagebox.showinfo("PPlaylist", "Spotfiy songlist successfully imported.")
             songs_status.set("Status: Loaded!")
             import_songs_status.configure(fg="green")
