@@ -299,7 +299,7 @@ prefrences_frame = tk.Frame(master=create_playlist_tab)
 prefrences_frame.pack(side=tk.LEFT,anchor=tk.NW, padx=15)
 create_prefrences_label = tk.Label(master=prefrences_frame, text="Create playlist", font="Helvetica, 35")
 create_prefrences_label.pack()
-prefrences_guide_label = tk.Label(master=prefrences_frame, text="Fill out the fields with what audio features you want your music to have.", font="Helvetica, 15")
+prefrences_guide_label = tk.Label(master=prefrences_frame, text="Fill out the fields with what audio features you want your\nmusic to have.", font="Helvetica, 15", justify="left")
 prefrences_guide_label.pack()
 
 # Create prefrences table
@@ -446,6 +446,14 @@ explict_checkbox = tk.Checkbutton(master=explict_frame)
 explict_checkbox.grid(row=0, column=0)
 explict_label = tk.Label(master=explict_frame, text="Include explict songs")
 explict_label.grid(row=0, column=1)
+
+# Create generate button
+generate_frame = tk.Frame(master=prefrences_frame)
+generate_frame.pack(anchor=tk.W)
+generate_label = tk.Label(master=generate_frame, text="Once the above table has the desired song values,\nclick the button below to create a unique playlist.")
+generate_label.pack()
+generate_button = tk.Button(master=generate_frame, text="Create playlist!")
+generate_button.pack(anchor=tk.W)
 
 # Loop main window
 root.mainloop()
