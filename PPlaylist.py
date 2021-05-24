@@ -158,44 +158,47 @@ def import_csv(file_name):
         sqlmanycommand("INSERT OR IGNORE INTO Songs (id, name, acousticness, danceability, energy, duration_ms, instrumentals, valence, popularity, tempo, liveness, loudness, speechiness, mode, key, explict, release_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",song_list)
 
 # Create linking table
-def linking_table():
-    # ArtistsGenre table
-    artistgenre = []
-    with open("data_by_artist_o.csv", encoding = "utf8") as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter = ",")
-        next(csv_reader)
-        for row in csv_reader:
-            # Artists
-            artists = row[1]
-            artists = artists.replace('"','')
-            
-            # Genres
-            genres = row[0]
-            genres = genres.replace('[', '').replace(']', '')
-            if genres != '':
-                genres = genres.split(',')
-                for genre_raw in genres:
-                    genre_raw = genre_raw.strip().replace("'","")
-                    artistgenre.append((artists,genre_raw))
-        # Put list into database
-        sqlmanycommand("INSERT OR IGNORE INTO ArtistsGenre VALUES (?,?)",artistgenre)
-    # ArtistsSongs table
-    artistsong = []
-    with open("tracks.csv", encoding = "utf8") as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter = ",")
-        next(csv_reader)
-        for row in csv_reader:
-            # Song_id
-            id_values = row[0]
+def linking_table(csv_id, file_name):
+    # Check which csv is being loaded
+    if csv_id == 1:
+        # ArtistsGenre table
+        artistgenre = []
+        with open(file_name, encoding = "utf8") as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter = ",")
+            next(csv_reader)
+            for row in csv_reader:
+                # Artists
+                artists = row[1]
+                artists = artists.replace('"','')
 
-            # artist
-            artists = row[5]
-            artists = artists.replace('[', '').replace(']', '').split(',')
-            for artist_raw in artists:
-                artist_raw = artist_raw.strip().replace("'","")
-                artistsong.append((id_values,artist_raw))
-        # Put list into database
-        sqlmanycommand("INSERT OR IGNORE INTO ArtistsSongs VALUES (?,?)",artistsong)
+                # Genres
+                genres = row[0]
+                genres = genres.replace('[', '').replace(']', '')
+                if genres != '':
+                    genres = genres.split(',')
+                    for genre_raw in genres:
+                        genre_raw = genre_raw.strip().replace("'","")
+                        artistgenre.append((artists,genre_raw))
+            # Put list into database
+            sqlmanycommand("INSERT OR IGNORE INTO ArtistsGenre VALUES (?,?)",artistgenre)
+        # ArtistsSongs table
+    else:
+        artistsong = []
+        with open(file_name, encoding = "utf8") as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter = ",")
+            next(csv_reader)
+            for row in csv_reader:
+                # Song_id
+                id_values = row[0]
+
+                # artist
+                artists = row[5]
+                artists = artists.replace('[', '').replace(']', '').split(',')
+                for artist_raw in artists:
+                    artist_raw = artist_raw.strip().replace("'","")
+                    artistsong.append((id_values,artist_raw))
+            # Put list into database
+            sqlmanycommand("INSERT OR IGNORE INTO ArtistsSongs VALUES (?,?)",artistsong)
 ## GUI ##
 # initialise tkinter
 root = tk.Tk()
@@ -212,6 +215,7 @@ def import_songs():
         if file != "":
             messagebox.showinfo("PPlaylist", "Now importing the spotify songlist. This may take a moment.")
             import_csv(file)
+            linking_table(0, file)
             messagebox.showinfo("PPlaylist", "Spotify songlist successfully imported.")
             songs_status.set("Status: Loaded!")
             import_songs_status.configure(fg="green")
@@ -227,6 +231,7 @@ def import_artists():
         if file != "":
             messagebox.showinfo("PPlaylist", "Now importing the artist list. This may take a moment.")
             import_csv(file)
+            linking_table(1, file)
             messagebox.showinfo("PPlaylist", "Artist list successfully imported.")
             artists_status.set("Status: Loaded!")
             import_artists_status.configure(fg="green")
