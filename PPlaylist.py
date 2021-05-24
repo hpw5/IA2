@@ -88,7 +88,7 @@ def import_csv(file_name):
     # Create tables if they don't exist
     create_database()
     # Import artists and genres
-    if file_name == "data_by_artist_o.csv":
+    if "data_by_artist_o.csv" in file_name:
         artist_list = []
         genre_list = []
         # Open artist and genre csv file
@@ -212,12 +212,27 @@ def import_songs():
         if file != "":
             messagebox.showinfo("PPlaylist", "Now importing the spotify songlist. This may take a moment.")
             import_csv(file)
-            messagebox.showinfo("PPlaylist", "Spotfiy songlist successfully imported.")
+            messagebox.showinfo("PPlaylist", "Spotify songlist successfully imported.")
             songs_status.set("Status: Loaded!")
             import_songs_status.configure(fg="green")
     else:
         #TODO Let users "reset" the catalogue. (Actually just delete it)
         messagebox.showerror("PPlaylist", "Error: Songlist has already been imported!")
+
+def import_artists():
+    # Checks whether the artist list has been imported or not
+    if artists_status.get() == ("Status: Not loaded!"):
+        file = tk.filedialog.askopenfilename(filetype=(('CSV files', "data_by_artist_o.csv"),))
+        # Checks if the user actually selected a file or not
+        if file != "":
+            messagebox.showinfo("PPlaylist", "Now importing the artist list. This may take a moment.")
+            import_csv(file)
+            messagebox.showinfo("PPlaylist", "Artist list successfully imported.")
+            artists_status.set("Status: Loaded!")
+            import_artists_status.configure(fg="green")
+    else:
+        #TODO Let users "reset" the catalogue. (Actually just delete it)
+        messagebox.showerror("PPlaylist", "Error: Artist list has already been imported!")
 
 # Create tkinter variables
 songs_status = tk.StringVar(value="Status: Not loaded!")
@@ -311,7 +326,7 @@ artists_label = tk.Label(master=import_artists_frame, text="Import the spotify a
 artists_label.pack(anchor=tk.W)
 artists_link = tk.Label(master=import_artists_frame, text = "It can be found at https://www.kaggle.com/yamaerenay/spotify-dataset-19212020-160k-tracks/?select=data_by_artist_o.csv")
 artists_link.pack()
-import_artists_button = tk.Button(master=import_artists_frame, text="Import artists")
+import_artists_button = tk.Button(master=import_artists_frame, text="Import artists", command=import_artists)
 import_artists_button.pack(anchor=tk.W)
 import_artists_status = tk.Label(master=import_artists_frame, textvariable=artists_status, fg="red")
 import_artists_status.pack(anchor=tk.W)
