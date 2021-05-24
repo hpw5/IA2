@@ -296,7 +296,7 @@ import_artists_status.pack(anchor=tk.W)
 
 # Create prefrences side
 prefrences_frame = tk.Frame(master=create_playlist_tab)
-prefrences_frame.pack(side=tk.LEFT,anchor=tk.NW, padx=15)
+prefrences_frame.pack(side=tk.LEFT, anchor=tk.NW, padx=15)
 create_prefrences_label = tk.Label(master=prefrences_frame, text="Create playlist", font="Helvetica, 35")
 create_prefrences_label.pack()
 prefrences_guide_label = tk.Label(master=prefrences_frame, text="Fill out the fields with what audio features you want your\nmusic to have.", font="Helvetica, 15", justify="left")
@@ -454,6 +454,14 @@ generate_label = tk.Label(master=generate_frame, text="Once the above table has 
 generate_label.pack()
 generate_button = tk.Button(master=generate_frame, text="Create playlist!")
 generate_button.pack(anchor=tk.W)
+
+# Create results frame
+results_frame = tk.Frame(master=create_playlist_tab)
+results_frame.pack(side=tk.RIGHT, padx=15, anchor=tk.N)
+results_label = tk.Label(master=results_frame, text="Your playlist", font="Helvetica, 35")
+results_label.pack()
+results_guide_label = tk.Label(master=results_frame, text="After filling in the table on the left, your playlist\nwill be automatically made and displayed below.", font="Helvetica, 15", justify="left")
+results_guide_label.pack()
 
 # Loop main window
 root.mainloop()
