@@ -2,7 +2,7 @@ import sqlite3
 import os
 import csv
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk,filedialog,messagebox
 PATH = "./"
 DB_FILE = PATH + "catalogue.db"
 
@@ -74,14 +74,19 @@ def create_database():
                             PRIMARY KEY (artist,song_id)
                         );
                         """
-    sqlcommand(artists_table)
-    sqlcommand(genres_table)
-    sqlcommand(artistsgenres_table)
-    sqlcommand(songs_table)
-    sqlcommand(artistssongs_table)
+    try:
+        sqlcommand(artists_table)
+        sqlcommand(genres_table)
+        sqlcommand(artistsgenres_table)
+        sqlcommand(songs_table)
+        sqlcommand(artistssongs_table)
+    except:
+        pass
 
 # Put csv values into database
 def import_csv(file_name):
+    # Create tables if they don't exist
+    create_database()
     # Import artists and genres
     if file_name == "data_by_artist_o.csv":
         artist_list = []
@@ -191,15 +196,31 @@ def linking_table():
                 artistsong.append((id_values,artist_raw))
         # Put list into database
         sqlmanycommand("INSERT OR IGNORE INTO ArtistsSongs VALUES (?,?)",artistsong)
-
 ## GUI ##
 # initialise tkinter
 root = tk.Tk()
 root.title("PPlaylist")
 root.geometry("1300x900")
 
+# Tkinter functions
+# Select and importthe songs csv file
+def import_songs():
+    # Checks whether the songs list has been imported or not
+    if songs_status.get() == ("Status: Not loaded!"):
+        file = tk.filedialog.askopenfilename(filetype=(('CSV files', "tracks.csv"),))
+        messagebox.showinfo("PPlaylist", "Now importing the spotfiy songlist. This may take a moment.")
+        #import_csv(file)
+        messagebox.showinfo("PPlaylist", "Spotfiy songlist successfully imported.")
+        songs_status.set("Status: Loaded!")
+        import_songs_status.configure(fg="green")
+    else:
+        #TODO Let users "reset" the catalogue. (Actually just delete it)
+        messagebox.showerror("PPlaylist", "Error: Songlist has already been imported!")
+
+
 # Create tkinter variables
 songs_status = tk.StringVar(value="Status: Not loaded!")
+artists_status = tk.StringVar(value="Status: Not loaded!")
 mode_selection = tk.StringVar(value="-")
 key_selection = tk.StringVar(value="-")
 genre_selection = tk.StringVar(value="-")
