@@ -12,6 +12,7 @@ def sqlcommand(sql_command):
     with sqlite3.connect(DB_FILE) as database:
         cursor = database.cursor()
         cursor.execute(sql_command)
+        return cursor.fetchall()
 
 # Run sql many command
 def sqlmanycommand(sql_command,values):
@@ -504,6 +505,21 @@ results_label = tk.Label(master=results_frame, text="Your playlist", font="Helve
 results_label.pack()
 results_guide_label = tk.Label(master=results_frame, text="After filling in the table on the left, your playlist\nwill be automatically made and displayed below.", font="Helvetica, 15", justify="left")
 results_guide_label.pack()
+
+# Check if files are imported
+# Songs
+try:
+    count = str(sqlcommand("SELECT COUNT(id) FROM Songs"))
+    if int(count.replace("[", "").replace("]", "").replace("(", "").replace(")", "").replace(",", "")) >= 1:
+        songs_status.set("Status: Loaded!")
+        import_songs_status.configure(fg="green")
+    # Artists
+    count = str(sqlcommand("SELECT COUNT(artist) FROM Artists"))
+    if int(count.replace("[", "").replace("]", "").replace("(", "").replace(")", "").replace(",", "")) >= 1:
+        artists_status.set("Status: Loaded!")
+        import_artists_status.configure(fg="green")
+except:
+    pass
 
 # Loop main window
 root.mainloop()
