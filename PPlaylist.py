@@ -220,6 +220,7 @@ def import_songs():
             messagebox.showinfo("PPlaylist", "Spotify songlist successfully imported.")
             songs_status.set("Status: Loaded!")
             import_songs_status.configure(fg="green")
+            fill_genres()
     else:
         #TODO Let users "reset" the catalogue. (Actually just delete it)
         messagebox.showerror("PPlaylist", "Error: Songlist has already been imported!")
@@ -236,10 +237,21 @@ def import_artists():
             messagebox.showinfo("PPlaylist", "Artist list successfully imported.")
             artists_status.set("Status: Loaded!")
             import_artists_status.configure(fg="green")
+            fill_genres()
     else:
         #TODO Let users "reset" the catalogue. (Actually just delete it)
         messagebox.showerror("PPlaylist", "Error: Artist list has already been imported!")
 
+def fill_genres():
+    # Check if both csv files have been imported, then put all genres into the genre dropdown box
+    if songs_status.get() == "Status: Loaded!" and artists_status.get() == "Status: Loaded!":
+        # Fetch all genres from database
+        genres_for_dropdown = sqlcommand("SELECT genre FROM Genres ORDER BY genre ASC")
+        # Convert list to string, remove symbols, then turn back into list
+        genre_options = str(genres_for_dropdown).replace(",)", "").replace("(", "").replace("',", ",").replace(", '", ", ").replace("['", "").replace("']", "").split(", ")
+        #TODO Add scrollbar
+        genre_dropdown = tk.OptionMenu(prefrences_table_frame, genre_value, *genre_options)
+        genre_dropdown.grid(row=13, column=2)
 # Create tkinter variables
 songs_status = tk.StringVar(value="Status: Not loaded!")
 artists_status = tk.StringVar(value="Status: Not loaded!")
@@ -481,12 +493,11 @@ key_options = ["C", "C#", "D", "D#", "E", "E#", "F", "F#", "G", "G#", "A", "A#",
 key_dropdown = tk.OptionMenu(prefrences_table_frame, key_value, *key_options)
 key_dropdown.grid(row=12, column=2)
 # Genre
-#TODO Put genres into dropdown
 genre_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=genre_check)
 genre_checkbox.grid(row=13, column=0)
 genre_label = tk.Label(master=prefrences_table_frame, text="Genre")
 genre_label.grid(row=13, column=1)
-genre_options = ["Placeholder"]
+genre_options = ["-"]
 genre_dropdown = tk.OptionMenu(prefrences_table_frame, genre_value, *genre_options)
 genre_dropdown.grid(row=13, column=2)
 # Number of songs
@@ -531,9 +542,10 @@ results_label.pack()
 results_guide_label = tk.Label(master=results_frame, text="After filling in the table on the left, your playlist\nwill be automatically made and displayed below.", font="Helvetica, 15", justify="left")
 results_guide_label.pack()
 
+# Inital checks
 # Check if files are imported
-# Songs
 try:
+    # Songs
     count = str(sqlcommand("SELECT COUNT(id) FROM Songs"))
     if int(count.replace("[", "").replace("]", "").replace("(", "").replace(")", "").replace(",", "")) >= 1:
         songs_status.set("Status: Loaded!")
@@ -545,6 +557,8 @@ try:
         import_artists_status.configure(fg="green")
 except:
     pass
+
+fill_genres()
 
 # Loop main window
 root.mainloop()
