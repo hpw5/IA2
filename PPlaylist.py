@@ -477,12 +477,12 @@ genre_options = ["Placeholder"]
 genre_dropdown = tk.OptionMenu(prefrences_table_frame, genre_value, *genre_options)
 genre_dropdown.grid(row=13, column=2)
 # Number of songs
-num_of_songs_checkbox = tk.Checkbutton(master=prefrences_table_frame)
-num_of_songs_checkbox.grid(row=14, column=0)
 num_of_songs_label = tk.Label(master=prefrences_table_frame, text="Number of songs")
 num_of_songs_label.grid(row=14, column=1)
 num_of_songs_entry = tk.Entry(master=prefrences_table_frame, textvariable=num_of_songs_value)
 num_of_songs_entry.grid(row=14, column=2)
+num_of_songs_required_label = tk.Label(master=prefrences_table_frame, text="REQUIRED", fg="red")
+num_of_songs_required_label.grid(row=14, column=3)
 
 # Pre-set audio features button
 pre_set_audio_features_frame = tk.Frame(master=prefrences_frame)
