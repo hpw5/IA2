@@ -4,6 +4,7 @@ import csv
 import tkinter as tk
 from tkinter import ttk,filedialog,messagebox
 import random
+import json
 PATH = "./"
 DB_FILE = PATH + "catalogue.db"
 
@@ -458,6 +459,30 @@ def update_entry_state():
     else:
         key_dropdown.configure(state='disabled')
 
+# Save prefrences when button is clicked
+def save_file():
+    savefile = filedialog.asksaveasfile(initialfile="Prefrences", defaultextension=".json", mode="w")
+    prefrences = {}
+    prefrences["prefrences"] = []
+    prefrences["prefrences"].append({
+        "acousticness": acousticness_value.get(),
+        "danceability": danceability_value.get(),
+        "energy": energy_value.get(),
+        "duration": duration_value.get(),
+        "instrumentalness": instrumentalness_value.get(),
+        "valence": valence_value.get(),
+        "popularity": popularity_value.get(),
+        "tempo": tempo_value.get(),
+        "liveness": liveness_value.get(),
+        "loudness": loudness_value.get(),
+        "speechiness": speechiness_value.get(),
+        "mode": mode_value.get(),
+        "key": key_value.get(),
+        "genre": genre_value.get(),
+        "num_of_songs": num_of_songs_value.get()
+    })
+    json.dump(prefrences, savefile)
+
 # Create tkinter variables
 songs_status = tk.StringVar(value="Status: Not loaded!")
 artists_status = tk.StringVar(value="Status: Not loaded!")
@@ -728,7 +753,7 @@ num_of_songs_required_label.grid(row=15, column=3)
 # Pre-set audio features button
 pre_set_audio_features_frame = tk.Frame(master=prefrences_frame)
 pre_set_audio_features_frame.pack(anchor=tk.W)
-save_features_label = tk.Button(master=pre_set_audio_features_frame, text="Save audio features")
+save_features_label = tk.Button(master=pre_set_audio_features_frame, text="Save audio features", command=save_file)
 save_features_label.grid(row=0, column=0)
 load_features_label = tk.Button(master=pre_set_audio_features_frame, text="Load audio features")
 load_features_label.grid(row=0, column=1, padx=15, pady=10)
