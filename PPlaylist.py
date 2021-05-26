@@ -3,6 +3,7 @@ import os
 import csv
 import tkinter as tk
 from tkinter import ttk,filedialog,messagebox
+import random
 PATH = "./"
 DB_FILE = PATH + "catalogue.db"
 
@@ -60,7 +61,7 @@ def create_database():
                             speechiness NUMERIC,
                             mode INTEGER,
                             key INTEGER,
-                            explict INTERGER,
+                            explicit INTERGER,
                             release_date TEXT
                         );
                         """
@@ -135,7 +136,7 @@ def import_csv(file_name):
                 duration_values = row[3]
                 # import instrumentals values
                 instrumentals_values = row[15]
-                # import valance values
+                # import valence values
                 valence_values = row[17]
                 # import popularity values
                 popularity_values = row[2]
@@ -151,12 +152,12 @@ def import_csv(file_name):
                 mode_values = row[12]
                 # import key values
                 key_values = row[10]
-                # import explict values
-                explict_values = row[4]
+                # import explicit values
+                explicit_values = row[4]
                 # import mode values
                 release_dates = row[7]
-                song_list.append((id_values,name_values,acousticness_values,danceability_values,energy_values,duration_values,instrumentals_values,valence_values,popularity_values,tempo_values,liveness_values,loudness_values,speechiness_values,mode_values,key_values,explict_values,release_dates))
-        sqlmanycommand("INSERT OR IGNORE INTO Songs (id, name, acousticness, danceability, energy, duration_ms, instrumentals, valence, popularity, tempo, liveness, loudness, speechiness, mode, key, explict, release_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",song_list)
+                song_list.append((id_values,name_values,acousticness_values,danceability_values,energy_values,duration_values,instrumentals_values,valence_values,popularity_values,tempo_values,liveness_values,loudness_values,speechiness_values,mode_values,key_values,explicit_values,release_dates))
+        sqlmanycommand("INSERT OR IGNORE INTO Songs (id, name, acousticness, danceability, energy, duration_ms, instrumentals, valence, popularity, tempo, liveness, loudness, speechiness, mode, key, explicit, release_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",song_list)
 
 # Create linking table
 def linking_table(csv_id, file_name):
@@ -214,12 +215,19 @@ def import_songs():
         file = tk.filedialog.askopenfilename(filetype=(('CSV files', "tracks.csv"),))
         # Checks if the user actually selected a file or not
         if file != "":
-            messagebox.showinfo("PPlaylist", "Now importing the spotify songlist. This may take a moment.")
+            # Create temp window to let user know that file is importing
+            temp = tk.Toplevel(master=root)
+            temp.geometry("200x100")
+            temp_label = tk.Label(master=temp, text="Importing", font="Helvetica, 25")
+            temp_label.pack(expand=1)
+            root.update()
             import_csv(file)
             linking_table(0, file)
             messagebox.showinfo("PPlaylist", "Spotify songlist successfully imported.")
             songs_status.set("Status: Loaded!")
             import_songs_status.configure(fg="green")
+            # Destroy temp window
+            temp.destroy()
             fill_genres()
     else:
         #TODO Let users "reset" the catalogue. (Actually just delete it)
@@ -231,12 +239,19 @@ def import_artists():
         file = tk.filedialog.askopenfilename(filetype=(('CSV files', "data_by_artist_o.csv"),))
         # Checks if the user actually selected a file or not
         if file != "":
-            messagebox.showinfo("PPlaylist", "Now importing the artist list. This may take a moment.")
+            # Create temp window to let user know that file is importing
+            temp = tk.Toplevel(master=root)
+            temp.geometry("200x100")
+            temp_label = tk.Label(master=temp, text="Importing", font="Helvetica, 25")
+            temp_label.pack(expand=1)
+            root.update()
             import_csv(file)
             linking_table(1, file)
             messagebox.showinfo("PPlaylist", "Artist list successfully imported.")
             artists_status.set("Status: Loaded!")
             import_artists_status.configure(fg="green")
+            # Destroy temp window
+            temp.destroy()
             fill_genres()
     else:
         #TODO Let users "reset" the catalogue. (Actually just delete it)
@@ -248,10 +263,119 @@ def fill_genres():
         # Fetch all genres from database
         genres_for_dropdown = sqlcommand("SELECT genre FROM Genres ORDER BY genre ASC")
         # Convert list to string, remove symbols, then turn back into list
-        genre_options = str(genres_for_dropdown).replace(",)", "").replace("(", "").replace("',", ",").replace(", '", ", ").replace("['", "").replace("']", "").split(", ")
+        genre_options = str(genres_for_dropdown).replace(",)", "").replace("(", "").replace("',", ",").replace(", '", ", ").replace("['", "").replace("']", "").replace('"', "").split(", ")
         #TODO Add scrollbar
         genre_dropdown = tk.OptionMenu(prefrences_table_frame, genre_value, *genre_options)
-        genre_dropdown.grid(row=13, column=2)
+        genre_dropdown.grid(row=14, column=2)
+        print(genre_options)
+
+def generate_playlist():
+    # Stop users from trying to create playlist if files aren't imported
+    if songs_status.get() != "Status: Loaded!" or artists_status.get() != "Status: Loaded!":
+        messagebox.showerror("PPlaylist", "Error: Spotify songlist and/or artist list not loaded!")
+        return
+
+    # Stop users from entering an unwanted value for number of songs
+    try:
+        isinstance(int(num_of_songs_value.get()), (int))
+        if int(num_of_songs_value.get()) <=0:
+            messagebox.showerror("PPlaylist", "Error: Please specify the number of songs you want")
+            return
+    except ValueError:
+        messagebox.showerror("PPlaylist", "Error: Please specify the number of songs you want")
+        return
+
+    # Put genre into query if user selects one
+    if genre_check.get() == True:
+        genre_sql = 'ArtistsGenre.genre = "' + genre_value.get() + '" AND '
+    else:
+        genre_sql = ""
+
+    # Include explicit songs if user chooses to
+    if explicit_check.get() == True:
+        explicit_value = 1
+    else:
+        explicit_value = 0
+
+# Include explicit songs if user chooses to
+    if mode_check.get() == True:
+        if mode_value.get() == "Minor":
+            mode_sql = 0
+        elif mode_value.get() == "Major":
+            mode_sql = 1
+        else:
+            mode_sql = random.randint(0, 1)
+    else:
+        mode_sql = random.randint(0, 1)
+
+    # Create list to be put into sql query
+    sql_prefrences = []
+    
+    # Put values into sql_prefrences or randomise if empty
+    # Acousticness
+    if acousticness_check.get() == True:
+        sql_prefrences.append("CAST(ABS(songs.acousticness - " + acousticness_value.get() + "*0.01) AS REAL)")
+    else:
+        sql_prefrences.append("CAST(ABS(songs.acousticness - " + str(random.uniform(0, 1)) + "*0.01) AS REAL)")
+
+        ### Since all the other prefrences would contain an
+        ### AND statement, this needs to be first to start off"""
+    
+    # Danceability
+    if danceability_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.danceability - " + danceability_value.get() + "*0.01) AS REAL)")
+    
+    # Energy
+    if energy_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.energy - " + energy_value.get() + "*0.01) AS REAL)")
+    
+    # Duration_ms
+    if duration_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.duration_ms - " + duration_value.get() + "*1000) AS REAL)")
+    
+    # Instrumentalness
+    if instrumentalness_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.instrumentals - " + instrumentalness_value.get() + "*0.01) AS REAL)")
+    
+    # Valence
+    if valence_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.valence - " + valence_value.get() + "*0.01) AS REAL)")
+    
+    # Popularity
+    if popularity_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.popularity - " + popularity_value.get() + "*0.01) AS REAL)")
+    
+    # Tempo
+    if tempo_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.tempo - " + tempo_value.get() + ") AS REAL)")
+    
+    # Liveness
+    if liveness_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.liveness - " + liveness_value.get() + ") AS REAL)")
+    
+    # Loudness
+    if loudness_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.loudness - " + loudness_value.get() + "*0.01) AS REAL)")
+    
+    # Speechiness
+    if speechiness_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.speechiness - " + speechiness_value.get() + ") AS REAL)")
+    
+    # Turn list into string
+    sql_prefrences = ''.join(sql_prefrences)
+    print(sql_prefrences)
+    query = f"""SELECT DISTINCT songs.id, songs.name, ArtistsSongs.artist
+                FROM songs
+                JOIN ArtistsSongs ON songs.id = ArtistsSongs.song_id
+                JOIN artistsGenre ON ArtistsSongs.artist = artistsGenre.artist
+                WHERE {genre_sql}songs.explicit = {explicit_value} AND songs.mode = {mode_sql}
+                ORDER BY {sql_prefrences}
+                ASC
+                LIMIT {num_of_songs_value.get()}
+            """
+    for row in (sqlcommand(query)):
+        print(row)
+    print(query)
 # Create tkinter variables
 songs_status = tk.StringVar(value="Status: Not loaded!")
 artists_status = tk.StringVar(value="Status: Not loaded!")
@@ -263,14 +387,16 @@ energy_value = tk.StringVar()
 energy_check = tk.BooleanVar()
 duration_value = tk.StringVar()
 duration_check = tk.BooleanVar()
-intrumentalness_value = tk.StringVar()
-intrumentalness_check = tk.BooleanVar()
-valance_value = tk.StringVar()
-valance_check = tk.BooleanVar()
+instrumentalness_value = tk.StringVar()
+instrumentalness_check = tk.BooleanVar()
+valence_value = tk.StringVar()
+valence_check = tk.BooleanVar()
 popularity_value = tk.StringVar()
 popularity_check = tk.BooleanVar()
 tempo_value = tk.StringVar()
 tempo_check = tk.BooleanVar()
+liveness_value = tk.StringVar()
+liveness_check = tk.BooleanVar()
 loudness_value = tk.StringVar()
 loudness_check = tk.BooleanVar()
 speechiness_value = tk.StringVar()
@@ -282,7 +408,7 @@ key_check = tk.BooleanVar()
 genre_value = tk.StringVar(value="-")
 genre_check = tk.BooleanVar()
 num_of_songs_value = tk.StringVar()
-explict_check = tk.BooleanVar()
+explicit_check = tk.BooleanVar()
 features_saved = tk.StringVar()
 
 # Create top frame
@@ -425,23 +551,23 @@ duration_entry = tk.Entry(master=prefrences_table_frame, textvariable=duration_v
 duration_entry.grid(row=4, column=2)
 duration_example = tk.Label(master=prefrences_table_frame, text="")
 # Instrumentalness
-intrumentalness_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=intrumentalness_check)
-intrumentalness_checkbox.grid(row=5, column=0)
+instrumentalness_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=instrumentalness_check)
+instrumentalness_checkbox.grid(row=5, column=0)
 intrumentalness_label = tk.Label(master=prefrences_table_frame, text="Instrumentalness")
 intrumentalness_label.grid(row=5, column=1)
-intrumentalness_entry = tk.Entry(master=prefrences_table_frame, textvariable=intrumentalness_value)
+intrumentalness_entry = tk.Entry(master=prefrences_table_frame, textvariable=instrumentalness_value)
 intrumentalness_entry.grid(row=5, column=2)
 intrumentalness_example = tk.Label(master=prefrences_table_frame, text="0-100")
 intrumentalness_example.grid(row=5, column=3)
-# Valance
-valance_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=valance_check)
-valance_checkbox.grid(row=6, column=0)
-valance_label = tk.Label(master=prefrences_table_frame, text="Valance (Happiness)")
-valance_label.grid(row=6, column=1)
-valance_entry = tk.Entry(master=prefrences_table_frame, textvariable=valance_value)
-valance_entry.grid(row=6, column=2)
-valance_example = tk.Label(master=prefrences_table_frame, text="0-100")
-valance_example.grid(row=6, column=3)
+# Valence
+valence_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=valence_check)
+valence_checkbox.grid(row=6, column=0)
+valence_label = tk.Label(master=prefrences_table_frame, text="Valence (Happiness)")
+valence_label.grid(row=6, column=1)
+valence_entry = tk.Entry(master=prefrences_table_frame, textvariable=valence_value)
+valence_entry.grid(row=6, column=2)
+valence_example = tk.Label(master=prefrences_table_frame, text="0-100")
+valence_example.grid(row=6, column=3)
 # Popularity
 popularity_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=popularity_check)
 popularity_checkbox.grid(row=7, column=0)
@@ -458,55 +584,64 @@ tempo_label = tk.Label(master=prefrences_table_frame, text="Speed (tempo)")
 tempo_label.grid(row=8, column=1)
 tempo_entry = tk.Entry(master=prefrences_table_frame, textvariable=tempo_value)
 tempo_entry.grid(row=8, column=2)
+# Liveness
+liveness_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=liveness_check)
+liveness_checkbox.grid(row=9, column=0)
+liveness_label = tk.Label(master=prefrences_table_frame, text="Audience background\nnoise")
+liveness_label.grid(row=9, column=1)
+liveness_entry = tk.Entry(master=prefrences_table_frame, textvariable=liveness_value)
+liveness_entry.grid(row=9, column=2)
+liveness_example = tk.Label(master=prefrences_table_frame, text="0-100")
+liveness_example.grid(row=9, column=3)
 # Loudness
 loudness_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=loudness_check)
-loudness_checkbox.grid(row=9, column=0)
+loudness_checkbox.grid(row=10, column=0)
 loudness_label = tk.Label(master=prefrences_table_frame, text="Loudness")
-loudness_label.grid(row=9, column=1)
+loudness_label.grid(row=10, column=1)
 loudness_entry = tk.Entry(master=prefrences_table_frame, textvariable=loudness_value)
-loudness_entry.grid(row=9, column=2)
+loudness_entry.grid(row=10, column=2)
 loudness_example = tk.Label(master=prefrences_table_frame, text="0-100")
-loudness_example.grid(row=9, column=3)
+loudness_example.grid(row=10, column=3)
 # Speechiness
 speechiness_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=speechiness_check)
-speechiness_checkbox.grid(row=10, column=0)
+speechiness_checkbox.grid(row=11, column=0)
 speechiness_label = tk.Label(master=prefrences_table_frame, text="Speechiness")
-speechiness_label.grid(row=10, column=1)
+speechiness_label.grid(row=11, column=1)
 speechiness_entry = tk.Entry(master=prefrences_table_frame, textvariable=speechiness_value)
-speechiness_entry.grid(row=10, column=2)
+speechiness_entry.grid(row=11, column=2)
 speechiness_example = tk.Label(master=prefrences_table_frame, text="0-100")
-speechiness_example.grid(row=10, column=3)
+speechiness_example.grid(row=11, column=3)
 # Mode
 mode_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=mode_check)
-mode_checkbox.grid(row=11, column=0)
+mode_checkbox.grid(row=12, column=0)
 mode_label = tk.Label(master=prefrences_table_frame, text="Mode")
-mode_label.grid(row=11, column=1)
+mode_label.grid(row=12, column=1)
 mode_options = ["Major", "Minor"]
 mode_dropdown = tk.OptionMenu(prefrences_table_frame, mode_value, *mode_options)
-mode_dropdown.grid(row=11, column=2)
+mode_dropdown.grid(row=12, column=2)
 # Key
 key_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=key_check)
-key_checkbox.grid(row=12, column=0)
+key_checkbox.grid(row=13, column=0)
 key_label = tk.Label(master=prefrences_table_frame, text="Key")
-key_label.grid(row=12, column=1)
+key_label.grid(row=13, column=1)
 key_options = ["C", "C#", "D", "D#", "E", "E#", "F", "F#", "G", "G#", "A", "A#", "B"]
 key_dropdown = tk.OptionMenu(prefrences_table_frame, key_value, *key_options)
-key_dropdown.grid(row=12, column=2)
+key_dropdown.grid(row=13, column=2)
 # Genre
 genre_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=genre_check)
-genre_checkbox.grid(row=13, column=0)
+genre_checkbox.grid(row=14, column=0)
 genre_label = tk.Label(master=prefrences_table_frame, text="Genre")
-genre_label.grid(row=13, column=1)
+genre_label.grid(row=14, column=1)
 genre_options = ["-"]
 genre_dropdown = tk.OptionMenu(prefrences_table_frame, genre_value, *genre_options)
-genre_dropdown.grid(row=13, column=2)
+genre_dropdown.grid(row=14, column=2)
 # Number of songs
 num_of_songs_label = tk.Label(master=prefrences_table_frame, text="Number of songs")
-num_of_songs_label.grid(row=14, column=1)
+num_of_songs_label.grid(row=15, column=1)
 num_of_songs_entry = tk.Entry(master=prefrences_table_frame, textvariable=num_of_songs_value)
-num_of_songs_entry.grid(row=14, column=2)
+num_of_songs_entry.grid(row=15, column=2)
 num_of_songs_required_label = tk.Label(master=prefrences_table_frame, text="REQUIRED", fg="red")
-num_of_songs_required_label.grid(row=14, column=3)
+num_of_songs_required_label.grid(row=15, column=3)
 
 # Pre-set audio features button
 pre_set_audio_features_frame = tk.Frame(master=prefrences_frame)
@@ -518,20 +653,20 @@ load_features_label.grid(row=0, column=1, padx=15, pady=10)
 features_saved_label = tk.Label(master=prefrences_frame, textvariable=features_saved, fg="green")
 features_saved_label.pack(anchor=tk.W)
 
-# Explict button
-explict_frame = tk.Frame(master=prefrences_frame)
-explict_frame.pack(anchor=tk.W)
-explict_checkbox = tk.Checkbutton(master=explict_frame, variable=explict_check)
-explict_checkbox.grid(row=0, column=0)
-explict_label = tk.Label(master=explict_frame, text="Include explict songs")
-explict_label.grid(row=0, column=1)
+# explicit button
+explicit_frame = tk.Frame(master=prefrences_frame)
+explicit_frame.pack(anchor=tk.W)
+explicit_checkbox = tk.Checkbutton(master=explicit_frame, variable=explicit_check)
+explicit_checkbox.grid(row=0, column=0)
+explicit_label = tk.Label(master=explicit_frame, text="Include explicit songs")
+explicit_label.grid(row=0, column=1)
 
 # Create generate button
 generate_frame = tk.Frame(master=prefrences_frame)
 generate_frame.pack(anchor=tk.W)
 generate_label = tk.Label(master=generate_frame, text="Once the above table has the desired song values,\nclick the button below to create a unique playlist.")
 generate_label.pack()
-generate_button = tk.Button(master=generate_frame, text="Create playlist!")
+generate_button = tk.Button(master=generate_frame, text="Create playlist!", command=generate_playlist)
 generate_button.pack(anchor=tk.W)
 
 # Create results frame
