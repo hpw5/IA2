@@ -268,8 +268,8 @@ def fill_genres():
         genres_for_dropdown = sqlcommand("SELECT genre FROM Genres ORDER BY genre ASC")
         # Convert list to string, remove symbols, then turn back into list
         genre_options = str(genres_for_dropdown).replace(",)", "").replace("(", "").replace("',", ",").replace(", '", ", ").replace("['", "").replace("']", "").replace('"', "").split(", ")
-        #TODO Add scrollbar
-        genre_dropdown = tk.OptionMenu(prefrences_table_frame, genre_value, *genre_options)
+        genre_dropdown = ttk.Combobox(master=prefrences_table_frame, width=27, textvariable=genre_value)
+        genre_dropdown['values'] = genre_options
         genre_dropdown.grid(row=14, column=2)
         print(genre_options)
 
@@ -647,8 +647,8 @@ genre_checkbox.grid(row=14, column=0)
 genre_label = tk.Label(master=prefrences_table_frame, text="Genre")
 genre_label.grid(row=14, column=1)
 genre_options = ["-"]
-#TODO Replace with combobox or similar
-genre_dropdown = tk.OptionMenu(prefrences_table_frame, genre_value, *genre_options)
+genre_dropdown = ttk.Combobox(master=prefrences_table_frame, width=27, textvariable=genre_value)
+genre_dropdown['values'] = genre_options
 genre_dropdown.grid(row=14, column=2)
 # Number of songs
 num_of_songs_label = tk.Label(master=prefrences_table_frame, text="Number of songs")
