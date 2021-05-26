@@ -61,7 +61,7 @@ def create_database():
                             speechiness NUMERIC,
                             mode INTEGER,
                             key INTEGER,
-                            explict INTERGER,
+                            explicit INTERGER,
                             release_date TEXT
                         );
                         """
@@ -152,12 +152,12 @@ def import_csv(file_name):
                 mode_values = row[12]
                 # import key values
                 key_values = row[10]
-                # import explict values
-                explict_values = row[4]
+                # import explicit values
+                explicit_values = row[4]
                 # import mode values
                 release_dates = row[7]
-                song_list.append((id_values,name_values,acousticness_values,danceability_values,energy_values,duration_values,instrumentals_values,valence_values,popularity_values,tempo_values,liveness_values,loudness_values,speechiness_values,mode_values,key_values,explict_values,release_dates))
-        sqlmanycommand("INSERT OR IGNORE INTO Songs (id, name, acousticness, danceability, energy, duration_ms, instrumentals, valence, popularity, tempo, liveness, loudness, speechiness, mode, key, explict, release_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",song_list)
+                song_list.append((id_values,name_values,acousticness_values,danceability_values,energy_values,duration_values,instrumentals_values,valence_values,popularity_values,tempo_values,liveness_values,loudness_values,speechiness_values,mode_values,key_values,explicit_values,release_dates))
+        sqlmanycommand("INSERT OR IGNORE INTO Songs (id, name, acousticness, danceability, energy, duration_ms, instrumentals, valence, popularity, tempo, liveness, loudness, speechiness, mode, key, explicit, release_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",song_list)
 
 # Create linking table
 def linking_table(csv_id, file_name):
@@ -260,10 +260,10 @@ def generate_playlist():
         genre_sql = " AND songs.genre = " + genre_value.get()
         print(genre_sql)
 
-    if explict_check.get() == True:
-        explict_value = 1
+    if explicit_check.get() == True:
+        explicit_value = 1
     else:
-        explict_value = 0
+        explicit_value = 0
 
     if mode_value.get() == "Minor":
         mode_sql = 0
@@ -311,7 +311,7 @@ key_check = tk.BooleanVar()
 genre_value = tk.StringVar(value="-")
 genre_check = tk.BooleanVar()
 num_of_songs_value = tk.StringVar()
-explict_check = tk.BooleanVar()
+explicit_check = tk.BooleanVar()
 features_saved = tk.StringVar()
 
 # Create top frame
@@ -547,13 +547,13 @@ load_features_label.grid(row=0, column=1, padx=15, pady=10)
 features_saved_label = tk.Label(master=prefrences_frame, textvariable=features_saved, fg="green")
 features_saved_label.pack(anchor=tk.W)
 
-# Explict button
-explict_frame = tk.Frame(master=prefrences_frame)
-explict_frame.pack(anchor=tk.W)
-explict_checkbox = tk.Checkbutton(master=explict_frame, variable=explict_check)
-explict_checkbox.grid(row=0, column=0)
-explict_label = tk.Label(master=explict_frame, text="Include explict songs")
-explict_label.grid(row=0, column=1)
+# explicit button
+explicit_frame = tk.Frame(master=prefrences_frame)
+explicit_frame.pack(anchor=tk.W)
+explicit_checkbox = tk.Checkbutton(master=explicit_frame, variable=explicit_check)
+explicit_checkbox.grid(row=0, column=0)
+explicit_label = tk.Label(master=explicit_frame, text="Include explicit songs")
+explicit_label.grid(row=0, column=1)
 
 # Create generate button
 generate_frame = tk.Frame(master=prefrences_frame)
