@@ -136,7 +136,7 @@ def import_csv(file_name):
                 duration_values = row[3]
                 # import instrumentals values
                 instrumentals_values = row[15]
-                # import valance values
+                # import valence values
                 valence_values = row[17]
                 # import popularity values
                 popularity_values = row[2]
@@ -266,7 +266,7 @@ def fill_genres():
         genre_options = str(genres_for_dropdown).replace(",)", "").replace("(", "").replace("',", ",").replace(", '", ", ").replace("['", "").replace("']", "").replace('"', "").split(", ")
         #TODO Add scrollbar
         genre_dropdown = tk.OptionMenu(prefrences_table_frame, genre_value, *genre_options)
-        genre_dropdown.grid(row=13, column=2)
+        genre_dropdown.grid(row=14, column=2)
         print(genre_options)
 
 def generate_playlist():
@@ -287,8 +287,9 @@ def generate_playlist():
 
     # Put genre into query if user selects one
     if genre_check.get() == True:
-        genre_sql = " AND songs.genre = " + genre_value.get()
-        print(genre_sql)
+        genre_sql = 'ArtistsGenre.genre = "' + genre_value.get() + '" AND '
+    else:
+        genre_sql = ""
 
     # Include explicit songs if user chooses to
     if explicit_check.get() == True:
@@ -296,22 +297,85 @@ def generate_playlist():
     else:
         explicit_value = 0
 
-    if mode_value.get() == "Minor":
-        mode_sql = 0
-    elif mode_value.get() == "Major":
-        mode_sql = 1
+# Include explicit songs if user chooses to
+    if mode_check.get() == True:
+        if mode_value.get() == "Minor":
+            mode_sql = 0
+        elif mode_value.get() == "Major":
+            mode_sql = 1
+        else:
+            mode_sql = random.randint(0, 1)
     else:
         mode_sql = random.randint(0, 1)
-        
-    query = f"""SELECT DISTINCT songs.id, songs.name, songs.energy
+
+    # Create list to be put into sql query
+    sql_prefrences = []
+    
+    # Put values into sql_prefrences or randomise if empty
+    # Acousticness
+    if acousticness_check.get() == True:
+        sql_prefrences.append("CAST(ABS(songs.acousticness - " + acousticness_value.get() + "*0.01) AS REAL)")
+    else:
+        sql_prefrences.append("CAST(ABS(songs.acousticness - " + str(random.uniform(0, 1)) + "*0.01) AS REAL)")
+
+        ### Since all the other prefrences would contain an
+        ### AND statement, this needs to be first to start off"""
+    
+    # Danceability
+    if danceability_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.danceability - " + danceability_value.get() + "*0.01) AS REAL)")
+    
+    # Energy
+    if energy_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.energy - " + energy_value.get() + "*0.01) AS REAL)")
+    
+    # Duration_ms
+    if duration_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.duration_ms - " + duration_value.get() + "*1000) AS REAL)")
+    
+    # Instrumentalness
+    if instrumentalness_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.instrumentals - " + instrumentalness_value.get() + "*0.01) AS REAL)")
+    
+    # Valence
+    if valence_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.valence - " + valence_value.get() + "*0.01) AS REAL)")
+    
+    # Popularity
+    if popularity_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.popularity - " + popularity_value.get() + "*0.01) AS REAL)")
+    
+    # Tempo
+    if tempo_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.tempo - " + tempo_value.get() + ") AS REAL)")
+    
+    # Liveness
+    if liveness_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.liveness - " + liveness_value.get() + ") AS REAL)")
+    
+    # Loudness
+    if loudness_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.loudness - " + loudness_value.get() + "*0.01) AS REAL)")
+    
+    # Speechiness
+    if speechiness_check.get() == True:
+        sql_prefrences.append(" AND CAST(ABS(songs.speechiness - " + speechiness_value.get() + ") AS REAL)")
+    
+    # Turn list into string
+    sql_prefrences = ''.join(sql_prefrences)
+    print(sql_prefrences)
+    query = f"""SELECT DISTINCT songs.id, songs.name, ArtistsSongs.artist
                 FROM songs
                 JOIN ArtistsSongs ON songs.id = ArtistsSongs.song_id
                 JOIN artistsGenre ON ArtistsSongs.artist = artistsGenre.artist
-                WHERE songs.explict = {explict_value} AND songs.mode = {mode_sql}
+                WHERE {genre_sql}songs.explicit = {explicit_value} AND songs.mode = {mode_sql}
+                ORDER BY {sql_prefrences}
+                ASC
                 LIMIT {num_of_songs_value.get()}
             """
     for row in (sqlcommand(query)):
         print(row)
+    print(query)
 # Create tkinter variables
 songs_status = tk.StringVar(value="Status: Not loaded!")
 artists_status = tk.StringVar(value="Status: Not loaded!")
@@ -325,8 +389,8 @@ duration_value = tk.StringVar()
 duration_check = tk.BooleanVar()
 instrumentalness_value = tk.StringVar()
 instrumentalness_check = tk.BooleanVar()
-valance_value = tk.StringVar()
-valance_check = tk.BooleanVar()
+valence_value = tk.StringVar()
+valence_check = tk.BooleanVar()
 popularity_value = tk.StringVar()
 popularity_check = tk.BooleanVar()
 tempo_value = tk.StringVar()
@@ -495,15 +559,15 @@ intrumentalness_entry = tk.Entry(master=prefrences_table_frame, textvariable=ins
 intrumentalness_entry.grid(row=5, column=2)
 intrumentalness_example = tk.Label(master=prefrences_table_frame, text="0-100")
 intrumentalness_example.grid(row=5, column=3)
-# Valance
-valance_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=valance_check)
-valance_checkbox.grid(row=6, column=0)
-valance_label = tk.Label(master=prefrences_table_frame, text="Valance (Happiness)")
-valance_label.grid(row=6, column=1)
-valance_entry = tk.Entry(master=prefrences_table_frame, textvariable=valance_value)
-valance_entry.grid(row=6, column=2)
-valance_example = tk.Label(master=prefrences_table_frame, text="0-100")
-valance_example.grid(row=6, column=3)
+# Valence
+valence_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=valence_check)
+valence_checkbox.grid(row=6, column=0)
+valence_label = tk.Label(master=prefrences_table_frame, text="Valence (Happiness)")
+valence_label.grid(row=6, column=1)
+valence_entry = tk.Entry(master=prefrences_table_frame, textvariable=valence_value)
+valence_entry.grid(row=6, column=2)
+valence_example = tk.Label(master=prefrences_table_frame, text="0-100")
+valence_example.grid(row=6, column=3)
 # Popularity
 popularity_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=popularity_check)
 popularity_checkbox.grid(row=7, column=0)
