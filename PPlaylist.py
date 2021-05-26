@@ -256,6 +256,10 @@ def fill_genres():
         print(genre_options)
 
 def generate_playlist():
+    # Stop users from trying to create playlist if files aren't imported
+    if songs_status.get() != "Status: Loaded!" or artists_status.get() != "Status: Loaded!":
+        messagebox.showerror("PPlaylist", "Error: Spotify songlist and/or artist list not loaded!")
+        return
     try:
         isinstance(int(num_of_songs_value.get()), (int))
         if int(num_of_songs_value.get()) <=0:
