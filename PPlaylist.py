@@ -269,7 +269,7 @@ def fill_genres():
         genres_for_dropdown = sqlcommand("SELECT genre FROM Genres ORDER BY genre ASC")
         # Convert list to string, remove symbols, then turn back into list
         genre_options = str(genres_for_dropdown).replace(",)", "").replace("(", "").replace("',", ",").replace(", '", ", ").replace("['", "").replace("']", "").replace('"', "").split(", ")
-        genre_dropdown = ttk.Combobox(master=preferences_table_frame, width=27, textvariable=genre_value)
+        genre_dropdown = ttk.Combobox(master=preferences_table_frame, width=20, textvariable=genre_value)
         genre_dropdown['values'] = genre_options
         genre_dropdown.grid(row=14, column=2)
         print(genre_options)
@@ -748,7 +748,7 @@ mode_checkbox.grid(row=12, column=0)
 mode_label = tk.Label(master=preferences_table_frame, text="Mode")
 mode_label.grid(row=12, column=1)
 mode_options = ["Major", "Minor"]
-mode_dropdown = ttk.Combobox(master=preferences_table_frame, width=27, textvariable=mode_value, state="disabled")
+mode_dropdown = ttk.Combobox(master=preferences_table_frame, width=20, textvariable=mode_value, state="disabled")
 mode_dropdown['values'] = mode_options
 mode_dropdown.grid(row=12, column=2)
 # Key
@@ -757,14 +757,14 @@ key_checkbox.grid(row=13, column=0)
 key_label = tk.Label(master=preferences_table_frame, text="Key")
 key_label.grid(row=13, column=1)
 key_options = ["C", "C#", "D", "D#", "E", "E#", "F", "F#", "G", "G#", "A", "A#", "B"]
-key_dropdown = ttk.Combobox(master=preferences_table_frame, width=27, textvariable=key_value, state="disabled")
+key_dropdown = ttk.Combobox(master=preferences_table_frame, width=20, textvariable=key_value, state="disabled")
 key_dropdown['values'] = key_options
 key_dropdown.grid(row=13, column=2)
 # Genre
 genre_label = tk.Label(master=preferences_table_frame, text="Genre")
 genre_label.grid(row=14, column=1)
 genre_options = ["-"]
-genre_dropdown = ttk.Combobox(master=preferences_table_frame, width=27, textvariable=genre_value)
+genre_dropdown = ttk.Combobox(master=preferences_table_frame, width=20, textvariable=genre_value)
 genre_dropdown['values'] = genre_options
 genre_dropdown.grid(row=14, column=2)
 # Number of songs
