@@ -217,9 +217,11 @@ def import_songs():
         if file != "":
             # Create temp window to let user know that file is importing
             temp = tk.Toplevel(master=root)
-            temp.geometry("200x100")
-            temp_label = tk.Label(master=temp, text="Importing", font="Helvetica, 25")
-            temp_label.pack(expand=1)
+            temp.geometry("300x100")
+            temp_label_top = tk.Label(master=temp, text="Importing", font="Helvetica, 25")
+            temp_label_bot = tk.Label(master=temp, text="Please be patient...", font="Helvetica, 14")
+            temp_label_top.pack(expand=1)
+            temp_label_bot.pack(expand=1)
             root.update()
             import_csv(file)
             linking_table(0, file)
@@ -241,9 +243,11 @@ def import_artists():
         if file != "":
             # Create temp window to let user know that file is importing
             temp = tk.Toplevel(master=root)
-            temp.geometry("200x100")
-            temp_label = tk.Label(master=temp, text="Importing", font="Helvetica, 25")
-            temp_label.pack(expand=1)
+            temp.geometry("300x100")
+            temp_label_top = tk.Label(master=temp, text="Importing", font="Helvetica, 25")
+            temp_label_bot = tk.Label(master=temp, text="Please be patient...", font="Helvetica, 14")
+            temp_label_top.pack(expand=1)
+            temp_label_bot.pack(expand=1)
             root.update()
             import_csv(file)
             linking_table(1, file)
@@ -297,7 +301,7 @@ def generate_playlist():
     else:
         explicit_value = 0
 
-# Include explicit songs if user chooses to
+    # Include explicit songs if user chooses to
     if mode_check.get() == True:
         if mode_value.get() == "Minor":
             mode_sql = 0
@@ -361,6 +365,14 @@ def generate_playlist():
     if speechiness_check.get() == True:
         sql_prefrences.append(" AND CAST(ABS(songs.speechiness - " + speechiness_value.get() + ") AS REAL)")
     
+    # Create temp window to let user know that the playlist is being created
+    temp = tk.Toplevel(master=root)
+    temp.geometry("300x100")
+    temp_label_top = tk.Label(master=temp, text="Creating playlist", font="Helvetica, 25")
+    temp_label_bot = tk.Label(master=temp, text="Please be patient...", font="Helvetica, 14")
+    temp_label_top.pack(expand=1)
+    temp_label_bot.pack(expand=1)
+    root.update()
     # Turn list into string
     sql_prefrences = ''.join(sql_prefrences)
     print(sql_prefrences)
@@ -376,6 +388,8 @@ def generate_playlist():
     for row in (sqlcommand(query)):
         print(row)
     print(query)
+    temp.destroy()
+    
 # Create tkinter variables
 songs_status = tk.StringVar(value="Status: Not loaded!")
 artists_status = tk.StringVar(value="Status: Not loaded!")
@@ -633,6 +647,7 @@ genre_checkbox.grid(row=14, column=0)
 genre_label = tk.Label(master=prefrences_table_frame, text="Genre")
 genre_label.grid(row=14, column=1)
 genre_options = ["-"]
+#TODO Replace with combobox or similar
 genre_dropdown = tk.OptionMenu(prefrences_table_frame, genre_value, *genre_options)
 genre_dropdown.grid(row=14, column=2)
 # Number of songs
