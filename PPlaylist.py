@@ -256,6 +256,15 @@ def fill_genres():
         print(genre_options)
 
 def generate_playlist():
+    try:
+        isinstance(int(num_of_songs_value.get()), (int))
+        if int(num_of_songs_value.get()) <=0:
+            messagebox.showerror("PPlaylist", "Error: Please specify the number of songs you want")
+            return
+    except ValueError:
+        messagebox.showerror("PPlaylist", "Error: Please specify the number of songs you want")
+        return
+
     if genre_check.get() == True:
         genre_sql = " AND songs.genre = " + genre_value.get()
         print(genre_sql)
