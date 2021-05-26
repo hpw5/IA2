@@ -215,12 +215,19 @@ def import_songs():
         file = tk.filedialog.askopenfilename(filetype=(('CSV files', "tracks.csv"),))
         # Checks if the user actually selected a file or not
         if file != "":
-            messagebox.showinfo("PPlaylist", "Now importing the spotify songlist. This may take a moment.")
+            # Create temp window to let user know that file is importing
+            temp = tk.Toplevel(master=root)
+            temp.geometry("200x100")
+            temp_label = tk.Label(master=temp, text="Importing", font="Helvetica, 25")
+            temp_label.pack(expand=1)
+            root.update()
             import_csv(file)
             linking_table(0, file)
             messagebox.showinfo("PPlaylist", "Spotify songlist successfully imported.")
             songs_status.set("Status: Loaded!")
             import_songs_status.configure(fg="green")
+            # Destroy temp window
+            temp.destroy()
             fill_genres()
     else:
         #TODO Let users "reset" the catalogue. (Actually just delete it)
@@ -232,12 +239,19 @@ def import_artists():
         file = tk.filedialog.askopenfilename(filetype=(('CSV files', "data_by_artist_o.csv"),))
         # Checks if the user actually selected a file or not
         if file != "":
-            messagebox.showinfo("PPlaylist", "Now importing the artist list. This may take a moment.")
+            # Create temp window to let user know that file is importing
+            temp = tk.Toplevel(master=root)
+            temp.geometry("200x100")
+            temp_label = tk.Label(master=temp, text="Importing", font="Helvetica, 25")
+            temp_label.pack(expand=1)
+            root.update()
             import_csv(file)
             linking_table(1, file)
             messagebox.showinfo("PPlaylist", "Artist list successfully imported.")
             artists_status.set("Status: Loaded!")
             import_artists_status.configure(fg="green")
+            # Destroy temp window
+            temp.destroy()
             fill_genres()
     else:
         #TODO Let users "reset" the catalogue. (Actually just delete it)
