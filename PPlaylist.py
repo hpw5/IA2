@@ -483,6 +483,27 @@ def save_file():
     })
     json.dump(preferences, savefile)
 
+# Load preferences when button is clicked
+def load_file():
+    loadfile = filedialog.askopenfile()
+    preferences = json.load(loadfile)
+    for value in preferences["preferences"]:
+        acousticness_value.set(value["acousticness"])
+        danceability_value.set(value["danceability"])
+        energy_value.set(value["energy"])
+        duration_value.set(value["duration"])
+        instrumentalness_value.set(value["instrumentalness"])
+        valence_value.set(value["valence"])
+        popularity_value.set(value["popularity"])
+        tempo_value.set(value["tempo"])
+        liveness_value.set(value["liveness"])
+        loudness_value.set(value["loudness"])
+        speechiness_value.set(value["speechiness"])
+        mode_value.set(value["mode"])
+        key_value.set(value["key"])
+        genre_value.set(value["genre"])
+        num_of_songs_value.set(value["num_of_songs"])
+
 # Create tkinter variables
 songs_status = tk.StringVar(value="Status: Not loaded!")
 artists_status = tk.StringVar(value="Status: Not loaded!")
@@ -755,7 +776,7 @@ pre_set_audio_features_frame = tk.Frame(master=preferences_frame)
 pre_set_audio_features_frame.pack(anchor=tk.W)
 save_features_label = tk.Button(master=pre_set_audio_features_frame, text="Save audio features", command=save_file)
 save_features_label.grid(row=0, column=0)
-load_features_label = tk.Button(master=pre_set_audio_features_frame, text="Load audio features")
+load_features_label = tk.Button(master=pre_set_audio_features_frame, text="Load audio features", command=load_file)
 load_features_label.grid(row=0, column=1, padx=15, pady=10)
 features_saved_label = tk.Label(master=preferences_frame, textvariable=features_saved, fg="green")
 features_saved_label.pack(anchor=tk.W)
