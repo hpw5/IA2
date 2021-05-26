@@ -3,6 +3,7 @@ import os
 import csv
 import tkinter as tk
 from tkinter import ttk,filedialog,messagebox
+import random
 PATH = "./"
 DB_FILE = PATH + "catalogue.db"
 
@@ -248,10 +249,38 @@ def fill_genres():
         # Fetch all genres from database
         genres_for_dropdown = sqlcommand("SELECT genre FROM Genres ORDER BY genre ASC")
         # Convert list to string, remove symbols, then turn back into list
-        genre_options = str(genres_for_dropdown).replace(",)", "").replace("(", "").replace("',", ",").replace(", '", ", ").replace("['", "").replace("']", "").split(", ")
+        genre_options = str(genres_for_dropdown).replace(",)", "").replace("(", "").replace("',", ",").replace(", '", ", ").replace("['", "").replace("']", "").replace('"', "").split(", ")
         #TODO Add scrollbar
         genre_dropdown = tk.OptionMenu(prefrences_table_frame, genre_value, *genre_options)
         genre_dropdown.grid(row=13, column=2)
+        print(genre_options)
+
+def generate_playlist():
+    if genre_check.get() == True:
+        genre_sql = " AND songs.genre = " + genre_value.get()
+        print(genre_sql)
+
+    if explict_check.get() == True:
+        explict_value = 1
+    else:
+        explict_value = 0
+
+    if mode_value.get() == "Minor":
+        mode_sql = 0
+    elif mode_value.get() == "Major":
+        mode_sql = 1
+    else:
+        mode_sql = random.randint(0, 1)
+        
+    query = f"""SELECT DISTINCT songs.id, songs.name, songs.energy
+                FROM songs
+                JOIN ArtistsSongs ON songs.id = ArtistsSongs.song_id
+                JOIN artistsGenre ON ArtistsSongs.artist = artistsGenre.artist
+                WHERE songs.explict = {explict_value} AND songs.mode = {mode_sql}
+                LIMIT {num_of_songs_value.get()}
+            """
+    for row in (sqlcommand(query)):
+        print(row)
 # Create tkinter variables
 songs_status = tk.StringVar(value="Status: Not loaded!")
 artists_status = tk.StringVar(value="Status: Not loaded!")
@@ -531,7 +560,7 @@ generate_frame = tk.Frame(master=prefrences_frame)
 generate_frame.pack(anchor=tk.W)
 generate_label = tk.Label(master=generate_frame, text="Once the above table has the desired song values,\nclick the button below to create a unique playlist.")
 generate_label.pack()
-generate_button = tk.Button(master=generate_frame, text="Create playlist!")
+generate_button = tk.Button(master=generate_frame, text="Create playlist!", command=generate_playlist)
 generate_button.pack(anchor=tk.W)
 
 # Create results frame
