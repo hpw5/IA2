@@ -290,7 +290,7 @@ def generate_playlist():
         return
 
     # Put genre into query if user selects one
-    if genre_check.get() == True:
+    if genre_value.get() != "Any":
         genre_sql = 'ArtistsGenre.genre = "' + genre_value.get() + '" AND '
     else:
         genre_sql = ""
@@ -389,7 +389,75 @@ def generate_playlist():
         print(row)
     print(query)
     temp.destroy()
-    
+
+# Change the state of the entry field depending on the checkboxes
+def update_entry_state():
+    # Acousticness
+    if acousticness_check.get() == True:
+        acousticness_entry.configure(state='normal')
+    else:
+        acousticness_entry.configure(state='disabled')
+    # Danceability
+    if danceability_check.get() == True:
+        danceability_entry.configure(state='normal')
+    else:
+        danceability_entry.configure(state='disabled')
+    # Energy
+    if energy_check.get() == True:
+        energy_entry.configure(state='normal')
+    else:
+        energy_entry.configure(state='disabled')
+    # Duration_ms
+    if duration_check.get() == True:
+        duration_entry.configure(state='normal')
+    else:
+        duration_entry.configure(state='disabled')
+    # Instrumentalness
+    if instrumentalness_check.get() == True:
+        instrumentalness_entry.configure(state='normal')
+    else:
+        instrumentalness_entry.configure(state='disabled')
+    # Valence
+    if valence_check.get() == True:
+        valence_entry.configure(state='normal')
+    else:
+        valence_entry.configure(state='disabled')
+    # Popularity
+    if popularity_check.get() == True:
+        popularity_entry.configure(state='normal')
+    else:
+        popularity_entry.configure(state='disabled')
+    # Tempo
+    if tempo_check.get() == True:
+        tempo_entry.configure(state='normal')
+    else:
+        tempo_entry.configure(state='disabled')
+    # Liveness
+    if liveness_check.get() == True:
+        liveness_entry.configure(state='normal')
+    else:
+        liveness_entry.configure(state='disabled')
+    # Loudness
+    if loudness_check.get() == True:
+        loudness_entry.configure(state='normal')
+    else:
+        loudness_entry.configure(state='disabled')
+    # Speechiness
+    if speechiness_check.get() == True:
+        speechiness_entry.configure(state='normal')
+    else:
+        speechiness_entry.configure(state='disabled')
+    # Mode
+    if mode_check.get() == True:
+        mode_dropdown.configure(state='normal')
+    else:
+        mode_dropdown.configure(state='disabled')
+    # Key
+    if key_check.get() == True:
+        key_dropdown.configure(state='normal')
+    else:
+        key_dropdown.configure(state='disabled')
+
 # Create tkinter variables
 songs_status = tk.StringVar(value="Status: Not loaded!")
 artists_status = tk.StringVar(value="Status: Not loaded!")
@@ -419,8 +487,7 @@ mode_value = tk.StringVar(value="-")
 mode_check = tk.BooleanVar()
 key_value = tk.StringVar(value="-")
 key_check = tk.BooleanVar()
-genre_value = tk.StringVar(value="-")
-genre_check = tk.BooleanVar()
+genre_value = tk.StringVar(value="Any")
 num_of_songs_value = tk.StringVar()
 explicit_check = tk.BooleanVar()
 features_saved = tk.StringVar()
@@ -530,120 +597,120 @@ audio_feature_label.grid(row=0, column=1)
 audio_feature_value_label = tk.Label(master=prefrences_table_frame, text="Value")
 audio_feature_value_label.grid(row=0, column=2)
 # Acousticness
-acousticness_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=acousticness_check)
+acousticness_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=acousticness_check, command=update_entry_state)
 acousticness_checkbox.grid(row=1, column=0)
 acousticness_label = tk.Label(master=prefrences_table_frame, text="Acousticness")
 acousticness_label.grid(row=1, column=1)
-acousticness_entry = tk.Entry(master=prefrences_table_frame, textvariable=acousticness_value)
+acousticness_entry = tk.Entry(master=prefrences_table_frame, textvariable=acousticness_value, state="disabled")
 acousticness_entry.grid(row=1, column=2)
 acousticness_example = tk.Label(master=prefrences_table_frame, text="0-100")
 acousticness_example.grid(row=1, column=3)
 # Danceability
-danceability_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=danceability_check)
+danceability_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=danceability_check, command=update_entry_state)
 danceability_checkbox.grid(row=2, column=0)
 danceability_label = tk.Label(master=prefrences_table_frame, text="Danceability")
 danceability_label.grid(row=2, column=1)
-danceability_entry = tk.Entry(master=prefrences_table_frame, textvariable=danceability_value)
+danceability_entry = tk.Entry(master=prefrences_table_frame, textvariable=danceability_value, state="disabled")
 danceability_entry.grid(row=2, column=2)
 danceability_example = tk.Label(master=prefrences_table_frame, text="0-100")
 danceability_example.grid(row=2, column=3)
 # Energy
-energy_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=energy_check)
+energy_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=energy_check, command=update_entry_state)
 energy_checkbox.grid(row=3, column=0)
 energy_label = tk.Label(master=prefrences_table_frame, text="Energy")
 energy_label.grid(row=3, column=1)
-energy_entry = tk.Entry(master=prefrences_table_frame, textvariable=energy_value)
+energy_entry = tk.Entry(master=prefrences_table_frame, textvariable=energy_value, state="disabled")
 energy_entry.grid(row=3, column=2)
 energy_example = tk.Label(master=prefrences_table_frame, text="0-100")
 energy_example.grid(row=3, column=3)
 # Duration_ms
-duration_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=duration_check)
+duration_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=duration_check, command=update_entry_state)
 duration_checkbox.grid(row=4, column=0)
 duration_label = tk.Label(master=prefrences_table_frame, text="Duration in seconds")
 duration_label.grid(row=4, column=1)
-duration_entry = tk.Entry(master=prefrences_table_frame, textvariable=duration_value)
+duration_entry = tk.Entry(master=prefrences_table_frame, textvariable=duration_value, state="disabled")
 duration_entry.grid(row=4, column=2)
 duration_example = tk.Label(master=prefrences_table_frame, text="")
 # Instrumentalness
-instrumentalness_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=instrumentalness_check)
+instrumentalness_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=instrumentalness_check, command=update_entry_state)
 instrumentalness_checkbox.grid(row=5, column=0)
-intrumentalness_label = tk.Label(master=prefrences_table_frame, text="Instrumentalness")
-intrumentalness_label.grid(row=5, column=1)
-intrumentalness_entry = tk.Entry(master=prefrences_table_frame, textvariable=instrumentalness_value)
-intrumentalness_entry.grid(row=5, column=2)
-intrumentalness_example = tk.Label(master=prefrences_table_frame, text="0-100")
-intrumentalness_example.grid(row=5, column=3)
+instrumentalness_label = tk.Label(master=prefrences_table_frame, text="Instrumentalness")
+instrumentalness_label.grid(row=5, column=1)
+instrumentalness_entry = tk.Entry(master=prefrences_table_frame, textvariable=instrumentalness_value, state="disabled")
+instrumentalness_entry.grid(row=5, column=2)
+instrumentalness_example = tk.Label(master=prefrences_table_frame, text="0-100")
+instrumentalness_example.grid(row=5, column=3)
 # Valence
-valence_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=valence_check)
+valence_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=valence_check, command=update_entry_state)
 valence_checkbox.grid(row=6, column=0)
 valence_label = tk.Label(master=prefrences_table_frame, text="Valence (Happiness)")
 valence_label.grid(row=6, column=1)
-valence_entry = tk.Entry(master=prefrences_table_frame, textvariable=valence_value)
+valence_entry = tk.Entry(master=prefrences_table_frame, textvariable=valence_value, state="disabled")
 valence_entry.grid(row=6, column=2)
 valence_example = tk.Label(master=prefrences_table_frame, text="0-100")
 valence_example.grid(row=6, column=3)
 # Popularity
-popularity_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=popularity_check)
+popularity_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=popularity_check, command=update_entry_state)
 popularity_checkbox.grid(row=7, column=0)
 popularity_label = tk.Label(master=prefrences_table_frame, text="Popularity")
 popularity_label.grid(row=7, column=1)
-popularity_entry = tk.Entry(master=prefrences_table_frame, textvariable=popularity_value)
+popularity_entry = tk.Entry(master=prefrences_table_frame, textvariable=popularity_value, state="disabled")
 popularity_entry.grid(row=7, column=2)
 popularity_example = tk.Label(master=prefrences_table_frame, text="0-100")
 popularity_example.grid(row=7, column=3)
 # Tempo
-tempo_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=tempo_check)
+tempo_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=tempo_check, command=update_entry_state)
 tempo_checkbox.grid(row=8, column=0)
 tempo_label = tk.Label(master=prefrences_table_frame, text="Speed (tempo)")
 tempo_label.grid(row=8, column=1)
-tempo_entry = tk.Entry(master=prefrences_table_frame, textvariable=tempo_value)
+tempo_entry = tk.Entry(master=prefrences_table_frame, textvariable=tempo_value, state="disabled")
 tempo_entry.grid(row=8, column=2)
 # Liveness
-liveness_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=liveness_check)
+liveness_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=liveness_check, command=update_entry_state)
 liveness_checkbox.grid(row=9, column=0)
 liveness_label = tk.Label(master=prefrences_table_frame, text="Audience background\nnoise")
 liveness_label.grid(row=9, column=1)
-liveness_entry = tk.Entry(master=prefrences_table_frame, textvariable=liveness_value)
+liveness_entry = tk.Entry(master=prefrences_table_frame, textvariable=liveness_value, state="disabled")
 liveness_entry.grid(row=9, column=2)
 liveness_example = tk.Label(master=prefrences_table_frame, text="0-100")
 liveness_example.grid(row=9, column=3)
 # Loudness
-loudness_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=loudness_check)
+loudness_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=loudness_check, command=update_entry_state)
 loudness_checkbox.grid(row=10, column=0)
 loudness_label = tk.Label(master=prefrences_table_frame, text="Loudness")
 loudness_label.grid(row=10, column=1)
-loudness_entry = tk.Entry(master=prefrences_table_frame, textvariable=loudness_value)
+loudness_entry = tk.Entry(master=prefrences_table_frame, textvariable=loudness_value, state="disabled")
 loudness_entry.grid(row=10, column=2)
 loudness_example = tk.Label(master=prefrences_table_frame, text="0-100")
 loudness_example.grid(row=10, column=3)
 # Speechiness
-speechiness_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=speechiness_check)
+speechiness_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=speechiness_check, command=update_entry_state)
 speechiness_checkbox.grid(row=11, column=0)
 speechiness_label = tk.Label(master=prefrences_table_frame, text="Speechiness")
 speechiness_label.grid(row=11, column=1)
-speechiness_entry = tk.Entry(master=prefrences_table_frame, textvariable=speechiness_value)
+speechiness_entry = tk.Entry(master=prefrences_table_frame, textvariable=speechiness_value, state="disabled")
 speechiness_entry.grid(row=11, column=2)
 speechiness_example = tk.Label(master=prefrences_table_frame, text="0-100")
 speechiness_example.grid(row=11, column=3)
 # Mode
-mode_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=mode_check)
+mode_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=mode_check, command=update_entry_state)
 mode_checkbox.grid(row=12, column=0)
 mode_label = tk.Label(master=prefrences_table_frame, text="Mode")
 mode_label.grid(row=12, column=1)
 mode_options = ["Major", "Minor"]
-mode_dropdown = tk.OptionMenu(prefrences_table_frame, mode_value, *mode_options)
+mode_dropdown = ttk.Combobox(master=prefrences_table_frame, width=27, textvariable=mode_value, state="disabled")
+mode_dropdown['values'] = mode_options
 mode_dropdown.grid(row=12, column=2)
 # Key
-key_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=key_check)
+key_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=key_check, command=update_entry_state)
 key_checkbox.grid(row=13, column=0)
 key_label = tk.Label(master=prefrences_table_frame, text="Key")
 key_label.grid(row=13, column=1)
 key_options = ["C", "C#", "D", "D#", "E", "E#", "F", "F#", "G", "G#", "A", "A#", "B"]
-key_dropdown = tk.OptionMenu(prefrences_table_frame, key_value, *key_options)
+key_dropdown = ttk.Combobox(master=prefrences_table_frame, width=27, textvariable=key_value, state="disabled")
+key_dropdown['values'] = key_options
 key_dropdown.grid(row=13, column=2)
 # Genre
-genre_checkbox = tk.Checkbutton(master=prefrences_table_frame, variable=genre_check)
-genre_checkbox.grid(row=14, column=0)
 genre_label = tk.Label(master=prefrences_table_frame, text="Genre")
 genre_label.grid(row=14, column=1)
 genre_options = ["-"]
