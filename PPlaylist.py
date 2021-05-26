@@ -485,25 +485,29 @@ def save_file():
 
 # Load preferences when button is clicked
 def load_file():
-    loadfile = filedialog.askopenfile()
-    preferences = json.load(loadfile)
-    for value in preferences["preferences"]:
-        acousticness_value.set(value["acousticness"])
-        danceability_value.set(value["danceability"])
-        energy_value.set(value["energy"])
-        duration_value.set(value["duration"])
-        instrumentalness_value.set(value["instrumentalness"])
-        valence_value.set(value["valence"])
-        popularity_value.set(value["popularity"])
-        tempo_value.set(value["tempo"])
-        liveness_value.set(value["liveness"])
-        loudness_value.set(value["loudness"])
-        speechiness_value.set(value["speechiness"])
-        mode_value.set(value["mode"])
-        key_value.set(value["key"])
-        genre_value.set(value["genre"])
-        num_of_songs_value.set(value["num_of_songs"])
-
+    # Prevent user from trying to load invaild files
+    try:
+        loadfile = filedialog.askopenfile()
+        preferences = json.load(loadfile)
+        for value in preferences["preferences"]:
+            acousticness_value.set(value["acousticness"])
+            danceability_value.set(value["danceability"])
+            energy_value.set(value["energy"])
+            duration_value.set(value["duration"])
+            instrumentalness_value.set(value["instrumentalness"])
+            valence_value.set(value["valence"])
+            popularity_value.set(value["popularity"])
+            tempo_value.set(value["tempo"])
+            liveness_value.set(value["liveness"])
+            loudness_value.set(value["loudness"])
+            speechiness_value.set(value["speechiness"])
+            mode_value.set(value["mode"])
+            key_value.set(value["key"])
+            genre_value.set(value["genre"])
+            num_of_songs_value.set(value["num_of_songs"])
+    except:
+            messagebox.showerror("PPlaylist", "Error: Cannot load audio features. Is it the right file?")
+            
 # Create tkinter variables
 songs_status = tk.StringVar(value="Status: Not loaded!")
 artists_status = tk.StringVar(value="Status: Not loaded!")
