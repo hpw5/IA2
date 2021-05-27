@@ -535,7 +535,36 @@ def export_csv():
         for row in result:
             print(row)
             csv_out.writerow(row)
+
+# Let user register themselves
+def register():
+    userfile = open("userfile.json","w")
+    userinfo = {}
+    userinfo[new_user.get()] = []
+    userinfo[new_user.get()].append({
+        "name": new_name.get(),
+        "password": new_password.get()
+    })
+    json.dump(userinfo, userfile)
+    messagebox.showinfo("PPlaylist", "User created")
+
+# Let user login
+def login():
+    userfile = "userfile.json"
+    # Pass the string variable as a file-like object
+    with open(userfile) as f:
+        userinfo = json.load(f)
+        for value in userinfo[user.get()]:
+            name.set(value["name"])
+            password_check.set(value["password"])
+        if password.get() == password_check.get():
+            messagebox.showinfo("PPlaylist", "Logged in")
             
+            # Replace login tab with something else
+            tab_control_top.destroy()
+            hello_label = tk.Label(master=top_frame, text="Welcome back " + name.get(), font="Helvetica, 25")
+            hello_label.pack(anchor=tk.W, pady=20)
+
 # Create tkinter variables
 songs_status = tk.StringVar(value="Status: Not loaded!")
 artists_status = tk.StringVar(value="Status: Not loaded!")
@@ -570,9 +599,16 @@ num_of_songs_value = tk.StringVar()
 explicit_check = tk.BooleanVar()
 features_saved = tk.StringVar()
 export_button_exist = tk.BooleanVar()
+new_user = tk.StringVar()
+new_name = tk.StringVar()
+new_password = tk.StringVar()
+user = tk.StringVar()
+name = tk.StringVar()
+password = tk.StringVar()
+password_check = tk.StringVar()
 
 # Create top frame
-top_frame = tk.Frame(master=root, bg="black", height=120)
+top_frame = tk.Frame(master=root, height=120)
 top_frame.pack(side=tk.TOP, fill=tk.X)
 
 # Create tabs for top frame
@@ -588,11 +624,11 @@ username_text = tk.Label(master=login_tab, text="Username: ")
 username_text.grid(column=0, row=0)
 password_text = tk.Label(master=login_tab, text="Password: ")
 password_text.grid(column=0, row=1)
-username_field = tk.Entry(master=login_tab, width=20)
+username_field = tk.Entry(master=login_tab, width=20, textvariable=user)
 username_field.grid(column=1, row=0, padx=5)
-password_field = tk.Entry(master=login_tab, width=20, show="*")
+password_field = tk.Entry(master=login_tab, width=20, show="*", textvariable=password)
 password_field.grid(column=1, row=1)
-submit_button = tk.Button(master=login_tab, text="Submit", width=10)
+submit_button = tk.Button(master=login_tab, text="Submit", width=10, command=login)
 submit_button.grid(column=0, row=2)
 
 # Create register section
@@ -604,13 +640,13 @@ password_text = tk.Label(master=register_tab, text="Password: ")
 password_text.grid(column=0, row=2)
 confirm_password_text = tk.Label(master=register_tab, text="Confirm password: ")
 confirm_password_text.grid(column=0, row=3)
-register_button = tk.Button(master=register_tab, text="Register", width=10)
+register_button = tk.Button(master=register_tab, text="Register", width=10, command=register)
 register_button.grid(column=0, row=4)
-name_field = tk.Entry(master=register_tab)
+name_field = tk.Entry(master=register_tab, textvariable=new_name)
 name_field.grid(column=1, row=0)
-username_field = tk.Entry(master=register_tab)
+username_field = tk.Entry(master=register_tab, textvariable=new_user)
 username_field.grid(column=1, row=1)
-password_field = tk.Entry(master=register_tab, show="*")
+password_field = tk.Entry(master=register_tab, show="*", textvariable=new_password)
 password_field.grid(column=1, row=2)
 confirm_password_field = tk.Entry(master=register_tab,show="*")
 confirm_password_field.grid(column=1, row=3)
