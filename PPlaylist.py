@@ -388,7 +388,6 @@ def generate_playlist():
     # Query the database and store the result
     global result
     result = sqlcommand(query)
-    print(result)
 
     # Create listboxes to display playlist
     song_result_label = tk.Label(master=result_listbox_frame, text="Song name")
