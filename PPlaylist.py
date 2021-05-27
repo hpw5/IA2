@@ -272,7 +272,6 @@ def fill_genres():
         genre_dropdown = ttk.Combobox(master=preferences_table_frame, width=20, textvariable=genre_value)
         genre_dropdown['values'] = genre_options
         genre_dropdown.grid(row=14, column=2)
-        print(genre_options)
 
 def generate_playlist():
     # Stop users from trying to create playlist if files aren't imported
@@ -386,12 +385,33 @@ def generate_playlist():
                 ASC
                 LIMIT {num_of_songs_value.get()}
             """
-    for row in (sqlcommand(query)):
-        print(row)
+    # Query the database and store the result
+    global result
+    result = sqlcommand(query)
+    print(result)
+
+    # Create listboxes to display playlist
+    song_result_label = tk.Label(master=result_listbox_frame, text="Song name")
+    song_result_label.grid(row=0, column=0)
+    song_result_listbox = tk.Listbox(master=result_listbox_frame, width=25, height=28, selectmode=tk.BROWSE)
+    song_result_listbox.grid(row=1, column=0)
+    artist_result_label = tk.Label(master=result_listbox_frame, text="Artist")
+    artist_result_label.grid(row=0, column=1)
+    artist_result_listbox = tk.Listbox(master=result_listbox_frame, width=25, height=28, selectmode=tk.BROWSE)
+    artist_result_listbox.grid(row=1, column=1)
+    for song in ([x[1] for x in result]):
+        song_result_listbox.insert(tk.END, song)
+    for artist in ([x[2] for x in result]):
+        artist_result_listbox.insert(tk.END, artist)
+    if export_button_exist.get() == False:
+        export_label = tk.Label(master=results_frame, text="If you're happy with this playlist,\nclick the button below to export it.", justify="left")
+        export_label.pack(anchor=tk.W,pady=10)
+        export_button = tk.Button(master=results_frame, text="Export")
+        export_button.pack(anchor=tk.SW)
+        export_button_exist.set(True)
     print(query)
     temp.destroy()
 
-# Change the state of the entry field depending on the checkboxes
 def update_entry_state():
     # Acousticness
     if acousticness_check.get() == True:
@@ -541,6 +561,7 @@ genre_value = tk.StringVar(value="Any")
 num_of_songs_value = tk.StringVar()
 explicit_check = tk.BooleanVar()
 features_saved = tk.StringVar()
+export_button_exist = tk.BooleanVar()
 
 # Create top frame
 top_frame = tk.Frame(master=root, bg="black", height=120)
@@ -808,6 +829,10 @@ results_label = tk.Label(master=results_frame, text="Your playlist", font="Helve
 results_label.pack()
 results_guide_label = tk.Label(master=results_frame, text="After filling in the table on the left, your playlist\nwill be automatically made and displayed below.", font="Helvetica, 15", justify="left")
 results_guide_label.pack()
+
+# Create frame to list results
+result_listbox_frame = tk.Frame(master=results_frame)
+result_listbox_frame.pack()
 
 # Inital checks
 # Check if files are imported
