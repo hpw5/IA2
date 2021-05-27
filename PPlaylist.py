@@ -376,7 +376,7 @@ def generate_playlist():
     # Turn list into string
     sql_preferences = ''.join(sql_preferences)
     print(sql_preferences)
-    query = f"""SELECT DISTINCT songs.id, songs.name, ArtistsSongs.artist
+    query = f"""SELECT DISTINCT songs.name, ArtistsSongs.artist
                 FROM songs
                 JOIN ArtistsSongs ON songs.id = ArtistsSongs.song_id
                 JOIN artistsGenre ON ArtistsSongs.artist = artistsGenre.artist
@@ -398,14 +398,14 @@ def generate_playlist():
     artist_result_label.grid(row=0, column=1)
     artist_result_listbox = tk.Listbox(master=result_listbox_frame, width=25, height=28, selectmode=tk.BROWSE)
     artist_result_listbox.grid(row=1, column=1)
-    for song in ([x[1] for x in result]):
+    for song in ([x[0] for x in result]):
         song_result_listbox.insert(tk.END, song)
-    for artist in ([x[2] for x in result]):
+    for artist in ([x[1] for x in result]):
         artist_result_listbox.insert(tk.END, artist)
     if export_button_exist.get() == False:
         export_label = tk.Label(master=results_frame, text="If you're happy with this playlist,\nclick the button below to export it.", justify="left")
         export_label.pack(anchor=tk.W,pady=10)
-        export_button = tk.Button(master=results_frame, text="Export")
+        export_button = tk.Button(master=results_frame, text="Export", command=export_csv)
         export_button.pack(anchor=tk.SW)
         export_button_exist.set(True)
     print(query)
@@ -526,6 +526,15 @@ def load_file():
             num_of_songs_value.set(value["num_of_songs"])
     except:
             messagebox.showerror("PPlaylist", "Error: Cannot load audio features. Is it the right file?")
+            
+# Export playlist to csv
+def export_csv():
+    with open(filedialog.asksaveasfilename(filetypes=[("CSV File", "*.csv")], defaultextension='.csv') + ".csv",'w') as out:
+        csv_out=csv.writer(out)
+        csv_out.writerow(['name','artist'])
+        for row in result:
+            print(row)
+            csv_out.writerow(row)
             
 # Create tkinter variables
 songs_status = tk.StringVar(value="Status: Not loaded!")
